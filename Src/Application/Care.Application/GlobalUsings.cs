@@ -1,0 +1,18 @@
+global using AhmadBase.Application;
+global using ISmsService = AhmadBase.External.Service.ISmsService;
+global using Care.Application.Contract.Services;
+global using Care.Domain.Agency.Repositories;
+global using Care.Domain.Billing.Repositories;
+global using Care.Domain.Caregiver.Repositories;
+global using Care.Domain.Identity.Repositories;
+global using Care.Domain.Report.Repositories;
+global using Care.Domain.Senior.Repositories;
+global using Care.Domain.Shift.Repositories;
+global using Care.Persistence.EF;
+global using Identity.Application.Commands;
+global using Agency.Application.Commands;
+global using Caregiver.Application.Commands;
+global using Senior.Application.Commands;
+global using Shift.Application.Commands;
+global using Report.Application.Commands;
+global using Billing.Application.Commands;

@@ -1,0 +1,10 @@
+global using FluentValidation;
+global using AhmadBase.Application;
+global using AhmadBase.IOC;
+global using Identity.Application.Commands;
+global using Agency.Application.Commands;
+global using Caregiver.Application.Commands;
+global using Senior.Application.Commands;
+global using Shift.Application.Commands;
+global using Report.Application.Commands;
+global using Billing.Application.Commands;

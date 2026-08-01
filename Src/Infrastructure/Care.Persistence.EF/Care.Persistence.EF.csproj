@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Salmandan.Care.Persistence.EF</AssemblyName>
+    <RootNamespace>Care.Persistence.EF</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AhmadBase.Persistence"      Version="1.0.4" />
+    <PackageReference Include="AhmadBase.External.Service" Version="1.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"            Version="8.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens"   Version="8.7.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt"  Version="8.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Care.Domain\Care.Domain.csproj" />
+    <ProjectReference Include="..\..\Application\Care.Application.Contract\Care.Application.Contract.csproj" />
+  </ItemGroup>
+
+</Project>

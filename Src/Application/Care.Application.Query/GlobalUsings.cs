@@ -1,0 +1,14 @@
+global using AhmadBase.Application.Query;
+global using Agency.Application.Queries;
+global using Caregiver.Application.Queries;
+global using Senior.Application.Queries;
+global using Shift.Application.Queries;
+global using Report.Application.Queries;
+global using Billing.Application.Queries;
+global using Care.Read.Dapper.Agency;
+global using Care.Read.Dapper.Caregiver;
+global using Care.Read.Dapper.Senior;
+global using Care.Read.Dapper.Shift;
+global using Care.Read.Dapper.Report;
+global using Care.Read.Dapper.Billing;
+global using Care.Domain.Identity.Exceptions;

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Salmandan.Care.Application.Query.Contract</AssemblyName>
+    <RootNamespace>Care.Application.Query.Contract</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AhmadBase.Application.Query" Version="1.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Care.Domain\Care.Domain.csproj" />
+    <ProjectReference Include="..\Care.Application.Contract\Care.Application.Contract.csproj" />
+  </ItemGroup>
+
+</Project>

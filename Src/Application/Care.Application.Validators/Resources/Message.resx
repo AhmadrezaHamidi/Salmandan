@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PhoneNumberRequired" xml:space="preserve"><value>شماره موبایل الزامی است.</value></data>
+  <data name="PhoneNumberInvalid" xml:space="preserve"><value>شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود.</value></data>
+  <data name="OtpCodeRequired" xml:space="preserve"><value>کد تأیید الزامی است.</value></data>
+  <data name="OtpCodeInvalid" xml:space="preserve"><value>کد تأیید باید ۵ رقم باشد.</value></data>
+  <data name="NationalIdInvalid" xml:space="preserve"><value>کد ملی باید ۱۰ رقم باشد.</value></data>
+  <data name="RefreshTokenRequired" xml:space="preserve"><value>توکن تمدید الزامی است.</value></data>
+
+  <data name="AgencyNameRequired" xml:space="preserve"><value>نام مؤسسه الزامی است.</value></data>
+  <data name="LicenseNumberRequired" xml:space="preserve"><value>شماره مجوز وزارت بهداشت الزامی است.</value></data>
+  <data name="LicenseExpiryInPast" xml:space="preserve"><value>تاریخ انقضای مجوز نمی‌تواند در گذشته باشد.</value></data>
+  <data name="CityRequired" xml:space="preserve"><value>شهر الزامی است.</value></data>
+  <data name="CommissionOutOfRange" xml:space="preserve"><value>درصد کمیسیون باید بین ۰ تا ۱۰۰ باشد.</value></data>
+  <data name="PriceMustBePositive" xml:space="preserve"><value>قیمت باید بزرگ‌تر از صفر باشد.</value></data>
+
+  <data name="FullNameRequired" xml:space="preserve"><value>نام و نام خانوادگی الزامی است.</value></data>
+  <data name="BirthYearInvalid" xml:space="preserve"><value>سال تولد معتبر نیست.</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>ذکر دلیل الزامی است.</value></data>
+
+  <data name="AddressRequired" xml:space="preserve"><value>آدرس الزامی است.</value></data>
+  <data name="BirthDateInvalid" xml:space="preserve"><value>تاریخ تولد معتبر نیست.</value></data>
+  <data name="SeniorIdInvalid" xml:space="preserve"><value>شناسه سالمند معتبر نیست.</value></data>
+  <data name="MedicationNameRequired" xml:space="preserve"><value>نام دارو الزامی است.</value></data>
+  <data name="DosageRequired" xml:space="preserve"><value>دوز مصرف دارو الزامی است.</value></data>
+  <data name="ConditionTitleRequired" xml:space="preserve"><value>عنوان بیماری الزامی است.</value></data>
+
+  <data name="AgencyIdInvalid" xml:space="preserve"><value>شناسه مؤسسه معتبر نیست.</value></data>
+  <data name="CaregiverIdInvalid" xml:space="preserve"><value>شناسه پرستار معتبر نیست.</value></data>
+  <data name="ShiftIdInvalid" xml:space="preserve"><value>شناسه شیفت معتبر نیست.</value></data>
+  <data name="ShiftDateInPast" xml:space="preserve"><value>تاریخ شیفت نمی‌تواند در گذشته باشد.</value></data>
+  <data name="ShiftEndBeforeStart" xml:space="preserve"><value>ساعت پایان شیفت باید بعد از ساعت شروع باشد.</value></data>
+  <data name="LatitudeInvalid" xml:space="preserve"><value>عرض جغرافیایی معتبر نیست.</value></data>
+  <data name="LongitudeInvalid" xml:space="preserve"><value>طول جغرافیایی معتبر نیست.</value></data>
+
+  <data name="PainLevelOutOfRange" xml:space="preserve"><value>شدت درد باید بین ۰ تا ۱۰ باشد.</value></data>
+  <data name="BloodPressureOutOfRange" xml:space="preserve"><value>مقدار فشار خون معتبر نیست.</value></data>
+  <data name="PulseOutOfRange" xml:space="preserve"><value>مقدار نبض معتبر نیست.</value></data>
+  <data name="TemperatureOutOfRange" xml:space="preserve"><value>دمای بدن معتبر نیست.</value></data>
+  <data name="OxygenOutOfRange" xml:space="preserve"><value>درصد اشباع اکسیژن باید بین ۵۰ تا ۱۰۰ باشد.</value></data>
+  <data name="IncidentDescriptionRequired" xml:space="preserve"><value>شرح حادثه الزامی است.</value></data>
+
+  <data name="AuthorityRequired" xml:space="preserve"><value>شناسه تراکنش درگاه الزامی است.</value></data>
+  <data name="OrderIdInvalid" xml:space="preserve"><value>شناسه سفارش معتبر نیست.</value></data>
+</root>

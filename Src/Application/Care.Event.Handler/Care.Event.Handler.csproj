@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Salmandan.Care.Event.Handler</AssemblyName>
+    <RootNamespace>Care.Event.Handler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AhmadBase.Application"                     Version="1.0.1" />
+    <PackageReference Include="AhmadBase.Event.Handler"                   Version="1.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Care.Domain\Care.Domain.csproj" />
+    <ProjectReference Include="..\Care.Application.Contract\Care.Application.Contract.csproj" />
+  </ItemGroup>
+
+</Project>

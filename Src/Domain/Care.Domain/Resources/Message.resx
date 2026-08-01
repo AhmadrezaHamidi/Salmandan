@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ── Identity ── -->
+  <data name="UserNotFoundException" xml:space="preserve"><value>کاربر مورد نظر یافت نشد.</value></data>
+  <data name="UserSuspendedException" xml:space="preserve"><value>حساب کاربری شما تعلیق شده است.</value></data>
+  <data name="OtpNotFoundException" xml:space="preserve"><value>کد تأیید مورد نظر یافت نشد.</value></data>
+  <data name="OtpExpiredException" xml:space="preserve"><value>کد تأیید منقضی شده است.</value></data>
+  <data name="OtpAlreadyUsedException" xml:space="preserve"><value>کد تأیید قبلاً استفاده شده است.</value></data>
+  <data name="OtpInvalidException" xml:space="preserve"><value>کد تأیید نادرست است.</value></data>
+  <data name="InvalidRefreshTokenException" xml:space="preserve"><value>توکن تمدید نامعتبر یا منقضی است.</value></data>
+  <data name="AccessDeniedException" xml:space="preserve"><value>شما به این پرونده دسترسی ندارید.</value></data>
+
+  <!-- ── Agency (مؤسسه پرستاری) ── -->
+  <data name="AgencyNotFoundException" xml:space="preserve"><value>مؤسسه پرستاری مورد نظر یافت نشد.</value></data>
+  <data name="AgencyAlreadyApprovedException" xml:space="preserve"><value>این مؤسسه قبلاً تأیید شده است.</value></data>
+  <data name="AgencyAlreadySuspendedException" xml:space="preserve"><value>این مؤسسه قبلاً تعلیق شده است.</value></data>
+  <data name="AgencyNotActiveException" xml:space="preserve"><value>مؤسسه فعال نیست و امکان پذیرش شیفت ندارد.</value></data>
+  <data name="AgencyLicenseExpiredException" xml:space="preserve"><value>مجوز وزارت بهداشت مؤسسه منقضی شده است.</value></data>
+  <data name="DuplicateLicenseNumberException" xml:space="preserve"><value>مؤسسه‌ای با این شماره مجوز قبلاً ثبت شده است.</value></data>
+  <data name="InvalidCommissionException" xml:space="preserve"><value>درصد کمیسیون باید بین ۰ تا ۱۰۰ باشد.</value></data>
+  <data name="InvalidServicePriceException" xml:space="preserve"><value>قیمت خدمت باید بزرگ‌تر از صفر باشد.</value></data>
+  <data name="ServicePriceNotFoundException" xml:space="preserve"><value>قیمت مصوب برای این خدمت در مؤسسه ثبت نشده است.</value></data>
+  <data name="InvalidRatingException" xml:space="preserve"><value>امتیاز باید بین ۱ تا ۵ باشد.</value></data>
+
+  <!-- ── Caregiver (پرستار) ── -->
+  <data name="CaregiverNotFoundException" xml:space="preserve"><value>پرستار مورد نظر یافت نشد.</value></data>
+  <data name="CaregiverAlreadyVerifiedException" xml:space="preserve"><value>صلاحیت این پرستار قبلاً تأیید شده است.</value></data>
+  <data name="CaregiverAlreadySuspendedException" xml:space="preserve"><value>این پرستار قبلاً تعلیق شده است.</value></data>
+  <data name="CaregiverNotVerifiedException" xml:space="preserve"><value>صلاحیت پرستار تأیید نشده و قابل تخصیص به شیفت نیست.</value></data>
+  <data name="CriminalRecordCheckRequiredException" xml:space="preserve"><value>بدون گواهی عدم سوءپیشینه امکان تأیید صلاحیت وجود ندارد.</value></data>
+  <data name="DuplicateNationalIdException" xml:space="preserve"><value>پرستاری با این کد ملی قبلاً ثبت شده است.</value></data>
+  <data name="DuplicateSkillException" xml:space="preserve"><value>این مهارت قبلاً برای پرستار ثبت شده است.</value></data>
+  <data name="SkillNotFoundException" xml:space="preserve"><value>مهارت مورد نظر یافت نشد.</value></data>
+  <data name="CaregiverNotInAgencyException" xml:space="preserve"><value>این پرستار متعلق به مؤسسه انتخاب‌شده نیست.</value></data>
+
+  <!-- ── Senior (پرونده مراقبت سالمند) ── -->
+  <data name="SeniorNotFoundException" xml:space="preserve"><value>پرونده سالمند مورد نظر یافت نشد.</value></data>
+  <data name="SeniorNotActiveException" xml:space="preserve"><value>پرونده سالمند غیرفعال است.</value></data>
+  <data name="FamilyMemberAlreadyExistsException" xml:space="preserve"><value>این کاربر قبلاً عضو حلقه خانواده است.</value></data>
+  <data name="FamilyMemberNotFoundException" xml:space="preserve"><value>عضو مورد نظر در حلقه خانواده یافت نشد.</value></data>
+  <data name="CannotRemoveLastManagerException" xml:space="preserve"><value>آخرین مدیر پرونده قابل حذف یا تنزل نیست.</value></data>
+  <data name="DuplicateConditionException" xml:space="preserve"><value>این بیماری قبلاً در پرونده ثبت شده است.</value></data>
+  <data name="ConditionNotFoundException" xml:space="preserve"><value>بیماری مورد نظر در پرونده یافت نشد.</value></data>
+  <data name="DuplicateMedicationException" xml:space="preserve"><value>این دارو قبلاً در پرونده ثبت شده است.</value></data>
+  <data name="MedicationNotFoundException" xml:space="preserve"><value>داروی مورد نظر در پرونده یافت نشد.</value></data>
+  <data name="DuplicateAllergyException" xml:space="preserve"><value>این حساسیت قبلاً در پرونده ثبت شده است.</value></data>
+  <data name="DuplicateEmergencyContactException" xml:space="preserve"><value>این شماره تماس اضطراری قبلاً ثبت شده است.</value></data>
+
+  <!-- ── Shift (شیفت مراقبت) ── -->
+  <data name="ShiftNotFoundException" xml:space="preserve"><value>شیفت مورد نظر یافت نشد.</value></data>
+  <data name="ShiftAlreadyCancelledException" xml:space="preserve"><value>این شیفت قبلاً لغو شده است.</value></data>
+  <data name="ShiftAlreadyCompletedException" xml:space="preserve"><value>این شیفت قبلاً تکمیل شده است.</value></data>
+  <data name="ShiftNotAssignedException" xml:space="preserve"><value>هنوز پرستاری به این شیفت تخصیص نیافته است.</value></data>
+  <data name="ShiftInProgressException" xml:space="preserve"><value>شیفت در حال اجراست و قابل لغو نیست.</value></data>
+  <data name="InvalidShiftTransitionException" xml:space="preserve"><value>این تغییر وضعیت برای شیفت مجاز نیست.</value></data>
+  <data name="InvalidShiftPriceException" xml:space="preserve"><value>مبلغ شیفت باید بزرگ‌تر از صفر باشد.</value></data>
+  <data name="ShiftDateInPastException" xml:space="preserve"><value>تاریخ شیفت نمی‌تواند در گذشته باشد.</value></data>
+  <data name="CheckInOutsideGeofenceException" xml:space="preserve"><value>ثبت ورود فقط در محل منزل سالمند امکان‌پذیر است.</value></data>
+  <data name="ShiftReportRequiredException" xml:space="preserve"><value>تا ثبت گزارش پایان شیفت، امکان تکمیل شیفت وجود ندارد.</value></data>
+  <data name="CaregiverShiftOverlapException" xml:space="preserve"><value>پرستار در این بازه زمانی شیفت دیگری دارد.</value></data>
+
+  <!-- ── Shift Report (گزارش شیفت) ── -->
+  <data name="ReportNotFoundException" xml:space="preserve"><value>گزارش شیفت مورد نظر یافت نشد.</value></data>
+  <data name="ReportAlreadySubmittedException" xml:space="preserve"><value>گزارش این شیفت قبلاً ثبت شده است.</value></data>
+  <data name="ReportAlreadyApprovedException" xml:space="preserve"><value>این گزارش قبلاً توسط خانواده تأیید شده است.</value></data>
+  <data name="InvalidPainLevelException" xml:space="preserve"><value>شدت درد باید بین ۰ تا ۱۰ باشد.</value></data>
+  <data name="InvalidVitalSignException" xml:space="preserve"><value>مقدار ثبت‌شده برای علائم حیاتی معتبر نیست.</value></data>
+  <data name="DuplicateMedicationIntakeException" xml:space="preserve"><value>وضعیت مصرف این دارو قبلاً در گزارش ثبت شده است.</value></data>
+  <data name="IncidentDescriptionRequiredException" xml:space="preserve"><value>شرح حادثه الزامی است.</value></data>
+
+  <!-- ── Billing (پرداخت امانی) ── -->
+  <data name="OrderNotFoundException" xml:space="preserve"><value>سفارش پرداخت مورد نظر یافت نشد.</value></data>
+  <data name="OrderAlreadyEscrowedException" xml:space="preserve"><value>وجه این سفارش قبلاً در امانت قرار گرفته است.</value></data>
+  <data name="OrderAlreadyReleasedException" xml:space="preserve"><value>وجه این سفارش قبلاً آزاد شده است.</value></data>
+  <data name="OrderAlreadyRefundedException" xml:space="preserve"><value>وجه این سفارش قبلاً عودت داده شده است.</value></data>
+  <data name="OrderNotEscrowedException" xml:space="preserve"><value>وجه این سفارش در امانت نیست.</value></data>
+  <data name="OrderNotReleasedException" xml:space="preserve"><value>تا آزادسازی وجه، امکان صدور فاکتور وجود ندارد.</value></data>
+  <data name="InvalidOrderAmountException" xml:space="preserve"><value>مبلغ سفارش معتبر نیست.</value></data>
+  <data name="InvalidOrderTransitionException" xml:space="preserve"><value>این تغییر وضعیت برای سفارش مجاز نیست.</value></data>
+  <data name="InvoiceAlreadyIssuedException" xml:space="preserve"><value>فاکتور این سفارش قبلاً صادر شده است.</value></data>
+  <data name="PaymentFailedException" xml:space="preserve"><value>پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.</value></data>
+</root>

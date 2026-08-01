@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Salmandan.Care.Config</AssemblyName>
+    <RootNamespace>Care.Config</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AhmadBase.Web"            Version="1.0.7" />
+    <PackageReference Include="AhmadBase.Config"         Version="1.0.7" />
+    <PackageReference Include="Ahmad.Base.Doamin"        Version="1.0.8" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\Care.Application.Contract\Care.Application.Contract.csproj" />
+    <ProjectReference Include="..\..\Application\Care.Application.Validators\Care.Application.Validators.csproj" />
+    <ProjectReference Include="..\..\Domain\Care.Domain\Care.Domain.csproj" />
+    <ProjectReference Include="..\Care.Persistence.EF\Care.Persistence.EF.csproj" />
+    <ProjectReference Include="..\Care.Read.Dapper\Care.Read.Dapper.csproj" />
+  </ItemGroup>
+
+</Project>

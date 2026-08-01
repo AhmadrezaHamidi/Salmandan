@@ -1,0 +1,9 @@
+global using System.Data;
+global using Dapper;
+global using AhmadBase.Application.Query;
+global using Agency.Application.Queries;
+global using Caregiver.Application.Queries;
+global using Senior.Application.Queries;
+global using Shift.Application.Queries;
+global using Report.Application.Queries;
+global using Billing.Application.Queries;

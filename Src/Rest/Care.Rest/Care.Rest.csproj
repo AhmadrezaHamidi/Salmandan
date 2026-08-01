@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Salmandan.Care.Rest</AssemblyName>
+    <RootNamespace>Care.Rest</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AhmadBase.Web" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\Care.Application.Contract\Care.Application.Contract.csproj" />
+    <ProjectReference Include="..\..\Application\Care.Application.Query.Contract\Care.Application.Query.Contract.csproj" />
+  </ItemGroup>
+
+</Project>
