@@ -12,19 +12,28 @@ public class ShiftEndpoints : IEndpoint
             .WithTags(ShiftConstants.Tag)
             .RequireAuthorization();
 
-        group.MapPostEndpoint<long>(ShiftConstants.Routes.Request,  Post,         ShiftConstants.Names.Request,  ShiftConstants.Docs.Request.Summary,  ShiftConstants.Docs.Request.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.Assign,   PutAssign,    ShiftConstants.Names.Assign,   ShiftConstants.Docs.Assign.Summary,   ShiftConstants.Docs.Assign.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.CheckIn,  PutCheckIn,   ShiftConstants.Names.CheckIn,  ShiftConstants.Docs.CheckIn.Summary,  ShiftConstants.Docs.CheckIn.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.CheckOut, PutCheckOut,  ShiftConstants.Names.CheckOut, ShiftConstants.Docs.CheckOut.Summary, ShiftConstants.Docs.CheckOut.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.Complete, PutComplete,  ShiftConstants.Names.Complete, ShiftConstants.Docs.Complete.Summary, ShiftConstants.Docs.Complete.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.Cancel,   PutCancel,    ShiftConstants.Names.Cancel,   ShiftConstants.Docs.Cancel.Summary,   ShiftConstants.Docs.Cancel.Description);
-        group.MapPutEndpoint(       ShiftConstants.Routes.NoShow,   PutNoShow,    ShiftConstants.Names.NoShow,   ShiftConstants.Docs.NoShow.Summary,   ShiftConstants.Docs.NoShow.Description);
-        group.MapPostEndpoint<long>(ShiftConstants.Routes.Replace,  PostReplace,  ShiftConstants.Names.Replace,  ShiftConstants.Docs.Replace.Summary,  ShiftConstants.Docs.Replace.Description);
+        // خانواده شیفت درخواست می‌دهد
+        group.MapPostEndpoint<long>(ShiftConstants.Routes.Request, Post, ShiftConstants.Names.Request, ShiftConstants.Docs.Request.Summary, ShiftConstants.Docs.Request.Description).RequireRoles(CareRoles.FamilyOrAdmin);
 
-        group.MapGetEndpoint<ShiftResult>(                    ShiftConstants.Routes.GetById,      Get,             ShiftConstants.Names.GetById,      ShiftConstants.Docs.GetById.Summary,      ShiftConstants.Docs.GetById.Description);
-        group.MapGetEndpoint<PagedResult<ShiftListItem>>(     ShiftConstants.Routes.GetPaged,     Gets,            ShiftConstants.Names.GetPaged,     ShiftConstants.Docs.GetPaged.Summary,     ShiftConstants.Docs.GetPaged.Description);
-        group.MapGetEndpoint<IReadOnlyList<ShiftListItem>>(   ShiftConstants.Routes.Calendar,     GetCalendar,     ShiftConstants.Names.Calendar,     ShiftConstants.Docs.Calendar.Summary,     ShiftConstants.Docs.Calendar.Description);
-        group.MapGetEndpoint<IReadOnlyList<CoverageRiskItem>>(ShiftConstants.Routes.CoverageRisk, GetCoverageRisk, ShiftConstants.Names.CoverageRisk, ShiftConstants.Docs.CoverageRisk.Summary, ShiftConstants.Docs.CoverageRisk.Description);
+        // مؤسسه تخصیص می‌دهد و شیفت را می‌بندد
+        group.MapPutEndpoint(       ShiftConstants.Routes.Assign,   PutAssign,   ShiftConstants.Names.Assign,   ShiftConstants.Docs.Assign.Summary,   ShiftConstants.Docs.Assign.Description)  .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(       ShiftConstants.Routes.Complete, PutComplete, ShiftConstants.Names.Complete, ShiftConstants.Docs.Complete.Summary, ShiftConstants.Docs.Complete.Description).RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(       ShiftConstants.Routes.NoShow,   PutNoShow,   ShiftConstants.Names.NoShow,   ShiftConstants.Docs.NoShow.Summary,   ShiftConstants.Docs.NoShow.Description)  .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPostEndpoint<long>(ShiftConstants.Routes.Replace,  PostReplace, ShiftConstants.Names.Replace,  ShiftConstants.Docs.Replace.Summary,  ShiftConstants.Docs.Replace.Description) .RequireRoles(CareRoles.AgencyStaff);
+
+        // فقط پرستار می‌تواند ورود و خروج بزند
+        group.MapPutEndpoint(ShiftConstants.Routes.CheckIn,  PutCheckIn,  ShiftConstants.Names.CheckIn,  ShiftConstants.Docs.CheckIn.Summary,  ShiftConstants.Docs.CheckIn.Description) .RequireRoles(CareRoles.CaregiverOrAdmin);
+        group.MapPutEndpoint(ShiftConstants.Routes.CheckOut, PutCheckOut, ShiftConstants.Names.CheckOut, ShiftConstants.Docs.CheckOut.Summary, ShiftConstants.Docs.CheckOut.Description).RequireRoles(CareRoles.CaregiverOrAdmin);
+
+        // لغو از هر دو طرف ممکن است
+        group.MapPutEndpoint(ShiftConstants.Routes.Cancel, PutCancel, ShiftConstants.Names.Cancel, ShiftConstants.Docs.Cancel.Summary, ShiftConstants.Docs.Cancel.Description).RequireRoles(CareRoles.FamilyOrAgency);
+
+        group.MapGetEndpoint<ShiftResult>(                 ShiftConstants.Routes.GetById,  Get,         ShiftConstants.Names.GetById,  ShiftConstants.Docs.GetById.Summary,  ShiftConstants.Docs.GetById.Description);
+        group.MapGetEndpoint<PagedResult<ShiftListItem>>(  ShiftConstants.Routes.GetPaged, Gets,        ShiftConstants.Names.GetPaged, ShiftConstants.Docs.GetPaged.Summary, ShiftConstants.Docs.GetPaged.Description);
+        group.MapGetEndpoint<IReadOnlyList<ShiftListItem>>(ShiftConstants.Routes.Calendar, GetCalendar, ShiftConstants.Names.Calendar, ShiftConstants.Docs.Calendar.Summary, ShiftConstants.Docs.Calendar.Description);
+
+        // داشبورد عملیاتی مؤسسه
+        group.MapGetEndpoint<IReadOnlyList<CoverageRiskItem>>(ShiftConstants.Routes.CoverageRisk, GetCoverageRisk, ShiftConstants.Names.CoverageRisk, ShiftConstants.Docs.CoverageRisk.Summary, ShiftConstants.Docs.CoverageRisk.Description).RequireRoles(CareRoles.AgencyStaff);
     }
 
     private static async Task<long> Post([FromBody] RequestShiftCommand cmd, IUserContext user, ICommandBus bus, CancellationToken ct)

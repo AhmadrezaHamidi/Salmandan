@@ -54,4 +54,23 @@ public sealed class CareDbContext(DbContextOptions<CareDbContext> options) : DbC
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CareDbContext).Assembly);
     }
+
+    /// <summary>
+    /// برداشتن رویدادهای دامین از aggregate های ردیابی‌شده و پاک کردن آن‌ها.
+    /// پس از اتمام Command صدا زده می‌شود تا رویدادها فقط روی تغییرات ذخیره‌شده منتشر شوند.
+    /// </summary>
+    public IReadOnlyList<AhmadBase.Doamin.IEvent> DrainDomainEvents()
+    {
+        var aggregates = ChangeTracker
+            .Entries<AhmadBase.Doamin.IAggregateRoot>()
+            .Select(e => e.Entity)
+            .Where(a => a.DomainEvents.Count > 0)
+            .ToList();
+
+        if (aggregates.Count == 0) return [];
+
+        var events = aggregates.SelectMany(a => a.DomainEvents).ToList();
+        aggregates.ForEach(a => a.ClearDomainEvents());
+        return events;
+    }
 }

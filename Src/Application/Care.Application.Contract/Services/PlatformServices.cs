@@ -24,6 +24,19 @@ public interface IPaymentSettings
 }
 
 /// <summary>
+/// اطلاع‌رسانی به اعضای حلقه خانواده یک سالمند.
+/// همان چیزی که «آرامش خاطر» را از یک وعده به یک تجربه‌ی روزمره تبدیل می‌کند.
+/// </summary>
+public interface IFamilyNotifier
+{
+    /// <summary>ارسال پیام به همه‌ی اعضای حلقه خانواده</summary>
+    Task NotifyFamilyAsync(long seniorId, string message, CancellationToken ct = default);
+
+    /// <summary>ارسال پیام به یک شماره مشخص</summary>
+    Task NotifyAsync(string phoneNumber, string message, CancellationToken ct = default);
+}
+
+/// <summary>
 /// تحلیل روند سلامت سالمند از روی گزارش‌های شیفت.
 /// نسخه اول قاعده‌محور است؛ در فاز بعد جای آن مدل یادگیری ماشین می‌نشیند.
 /// </summary>

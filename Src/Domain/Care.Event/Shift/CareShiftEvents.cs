@@ -9,10 +9,10 @@ public sealed record ShiftRequestedEvent(long ShiftId, long SeniorId, long Agenc
 public sealed record ShiftAssignedEvent(long ShiftId, long SeniorId, long CaregiverId) : IEvent;
 
 /// <summary>رویداد ورود پرستار به محل (چک‌این ژئوفنس)</summary>
-public sealed record ShiftCheckedInEvent(long ShiftId, long CaregiverId, DateTime CheckInAt) : IEvent;
+public sealed record ShiftCheckedInEvent(long ShiftId, long SeniorId, long CaregiverId, DateTime CheckInAt) : IEvent;
 
 /// <summary>رویداد خروج پرستار از محل</summary>
-public sealed record ShiftCheckedOutEvent(long ShiftId, long CaregiverId, DateTime CheckOutAt) : IEvent;
+public sealed record ShiftCheckedOutEvent(long ShiftId, long SeniorId, long CaregiverId, DateTime CheckOutAt) : IEvent;
 
 /// <summary>رویداد تکمیل شیفت — تریگر آزادسازی وجه از امانت</summary>
 public sealed record ShiftCompletedEvent(long ShiftId, long SeniorId, long CaregiverId, long AgencyId) : IEvent;

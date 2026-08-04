@@ -48,8 +48,12 @@ public sealed class IdentityHandlers(
         var user = await userRepo.GetByPhoneAsync(command.PhoneNumber, token);
         if (user is null)
         {
-            var id = await userRepo.GetNextIdAsync();
-            user = User.Create(new CreateUserArg(id, command.PhoneNumber, command.Role));
+            var id   = await userRepo.GetNextIdAsync();
+            var role = IsPlatformAdmin(command.PhoneNumber)
+                ? Domain.Identity.Enums.UserRole.Admin
+                : Domain.Identity.Enums.UserRole.Family;
+
+            user = User.Create(new CreateUserArg(id, command.PhoneNumber, role));
             await userRepo.AddAsync(user, token);
         }
         else if (user.Status == Domain.Identity.Enums.UserStatus.Suspended)
@@ -102,6 +106,15 @@ public sealed class IdentityHandlers(
         await userRepo.UpdateAsync(user, token);
         await db.SaveChangesAsync(token);
         return true;
+    }
+
+    /// <summary>
+    /// نقش ادمین فقط از روی شماره‌های اعلام‌شده در تنظیمات داده می‌شود، نه ورودی کلاینت.
+    /// </summary>
+    private bool IsPlatformAdmin(string phoneNumber)
+    {
+        var adminPhones = configuration.GetSection("Platform:AdminPhones").Get<string[]>() ?? [];
+        return adminPhones.Contains(phoneNumber);
     }
 
     private async Task<LoginResponse> IssueTokensAsync(User user, CancellationToken ct)

@@ -12,20 +12,28 @@ public class AgencyEndpoints : IEndpoint
             .WithTags(AgencyConstants.Tag)
             .RequireAuthorization();
 
+        // ثبت مؤسسه برای هر کاربر احرازشده باز است — ثبت‌کننده مدیر مؤسسه می‌شود
         group.MapPostEndpoint<long>(AgencyConstants.Routes.Register, Post,        AgencyConstants.Names.Register,   AgencyConstants.Docs.Register.Summary,   AgencyConstants.Docs.Register.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Approve,  PutApprove,  AgencyConstants.Names.Approve,    AgencyConstants.Docs.Approve.Summary,    AgencyConstants.Docs.Approve.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Reject,   PutReject,   AgencyConstants.Names.Reject,     AgencyConstants.Docs.Reject.Summary,     AgencyConstants.Docs.Reject.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Suspend,  PutSuspend,  AgencyConstants.Names.Suspend,    AgencyConstants.Docs.Suspend.Summary,    AgencyConstants.Docs.Suspend.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Renew,    PutRenew,    AgencyConstants.Names.Renew,      AgencyConstants.Docs.Renew.Summary,      AgencyConstants.Docs.Renew.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Update,   PutUpdate,   AgencyConstants.Names.Update,     AgencyConstants.Docs.Update.Summary,     AgencyConstants.Docs.Update.Description);
-        group.MapPutEndpoint(       AgencyConstants.Routes.Commission, PutCommission, AgencyConstants.Names.Commission, AgencyConstants.Docs.Commission.Summary, AgencyConstants.Docs.Commission.Description);
-        group.MapPostEndpoint<bool>(AgencyConstants.Routes.SetPrice, PostPrice,   AgencyConstants.Names.SetPrice,   AgencyConstants.Docs.SetPrice.Summary,   AgencyConstants.Docs.SetPrice.Description);
 
+        // تصمیم‌های حاکمیتی پلتفرم — فقط ادمین
+        group.MapPutEndpoint(AgencyConstants.Routes.Approve,    PutApprove,    AgencyConstants.Names.Approve,    AgencyConstants.Docs.Approve.Summary,    AgencyConstants.Docs.Approve.Description)      .RequireRoles(CareRoles.AdminOnly);
+        group.MapPutEndpoint(AgencyConstants.Routes.Reject,     PutReject,     AgencyConstants.Names.Reject,     AgencyConstants.Docs.Reject.Summary,     AgencyConstants.Docs.Reject.Description)       .RequireRoles(CareRoles.AdminOnly);
+        group.MapPutEndpoint(AgencyConstants.Routes.Suspend,    PutSuspend,    AgencyConstants.Names.Suspend,    AgencyConstants.Docs.Suspend.Summary,    AgencyConstants.Docs.Suspend.Description)      .RequireRoles(CareRoles.AdminOnly);
+        group.MapPutEndpoint(AgencyConstants.Routes.Commission, PutCommission, AgencyConstants.Names.Commission, AgencyConstants.Docs.Commission.Summary, AgencyConstants.Docs.Commission.Description)   .RequireRoles(CareRoles.AdminOnly);
+
+        // مدیریت داخلی مؤسسه
+        group.MapPutEndpoint(       AgencyConstants.Routes.Renew,    PutRenew,  AgencyConstants.Names.Renew,    AgencyConstants.Docs.Renew.Summary,    AgencyConstants.Docs.Renew.Description)   .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(       AgencyConstants.Routes.Update,   PutUpdate, AgencyConstants.Names.Update,   AgencyConstants.Docs.Update.Summary,   AgencyConstants.Docs.Update.Description)  .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPostEndpoint<bool>(AgencyConstants.Routes.SetPrice, PostPrice, AgencyConstants.Names.SetPrice, AgencyConstants.Docs.SetPrice.Summary, AgencyConstants.Docs.SetPrice.Description).RequireRoles(CareRoles.AgencyStaff);
+
+        // خواندنی‌های عمومی — خانواده باید بتواند مؤسسه انتخاب کند
         group.MapGetEndpoint<AgencyResult>(                    AgencyConstants.Routes.GetById,   Get,          AgencyConstants.Names.GetById,   AgencyConstants.Docs.GetById.Summary,   AgencyConstants.Docs.GetById.Description);
         group.MapGetEndpoint<PagedResult<AgencyListItem>>(     AgencyConstants.Routes.GetPaged,  Gets,         AgencyConstants.Names.GetPaged,  AgencyConstants.Docs.GetPaged.Summary,  AgencyConstants.Docs.GetPaged.Description);
         group.MapGetEndpoint<IReadOnlyList<AgencyListItem>>(   AgencyConstants.Routes.Available, GetAvailable, AgencyConstants.Names.Available, AgencyConstants.Docs.Available.Summary, AgencyConstants.Docs.Available.Description);
         group.MapGetEndpoint<IReadOnlyList<AgencyPriceItem>>(  AgencyConstants.Routes.GetPrices, GetPrices,    AgencyConstants.Names.GetPrices, AgencyConstants.Docs.GetPrices.Summary, AgencyConstants.Docs.GetPrices.Description);
-        group.MapGetEndpoint<AgencyBalanceResult>(             AgencyConstants.Routes.Balance,   GetBalance,   AgencyConstants.Names.Balance,   AgencyConstants.Docs.Balance.Summary,   AgencyConstants.Docs.Balance.Description);
+
+        // داده مالی — فقط مؤسسه و ادمین
+        group.MapGetEndpoint<AgencyBalanceResult>(AgencyConstants.Routes.Balance, GetBalance, AgencyConstants.Names.Balance, AgencyConstants.Docs.Balance.Summary, AgencyConstants.Docs.Balance.Description).RequireRoles(CareRoles.AgencyStaff);
     }
 
     private static async Task<long> Post([FromBody] RegisterAgencyCommand cmd, IUserContext user, ICommandBus bus, CancellationToken ct)

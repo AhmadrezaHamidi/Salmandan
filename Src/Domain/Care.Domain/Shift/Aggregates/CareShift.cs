@@ -129,7 +129,7 @@ public sealed class CareShift : AggregateRoot<long>
         CheckInLatitude  = latitude;
         CheckInLongitude = longitude;
         Status           = ShiftStatus.CheckedIn;
-        RaiseDomainEvent(new ShiftCheckedInEvent(Id, CaregiverId.Value, CheckInAt.Value));
+        RaiseDomainEvent(new ShiftCheckedInEvent(Id, SeniorId, CaregiverId.Value, CheckInAt.Value));
     }
 
     /// <summary>چک‌اوت پرستار — پس از آن باید گزارش شیفت ثبت شود</summary>
@@ -139,7 +139,7 @@ public sealed class CareShift : AggregateRoot<long>
 
         CheckOutAt = DateTime.UtcNow;
         Status     = ShiftStatus.CheckedOut;
-        RaiseDomainEvent(new ShiftCheckedOutEvent(Id, CaregiverId!.Value, CheckOutAt.Value));
+        RaiseDomainEvent(new ShiftCheckedOutEvent(Id, SeniorId, CaregiverId!.Value, CheckOutAt.Value));
     }
 
     /// <summary>تکمیل شیفت پس از تأیید گزارش — تریگر آزادسازی وجه از امانت</summary>

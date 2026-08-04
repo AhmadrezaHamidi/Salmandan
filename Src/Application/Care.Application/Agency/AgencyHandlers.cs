@@ -30,7 +30,8 @@ public sealed class AgencyHandlers(
             ?? throw new Domain.Identity.Exceptions.UserNotFoundException();
 
         // مالک مؤسسه به نقش مدیر مؤسسه ارتقا می‌یابد
-        owner.SetRole(Domain.Identity.Enums.UserRole.AgencyManager);
+        // توجه: توکن فعلی او هنوز نقش قبلی را دارد و باید دوباره وارد شود
+        owner.PromoteTo(Domain.Identity.Enums.UserRole.AgencyManager);
         await userRepo.UpdateAsync(owner, token);
 
         var id     = await agencyRepo.GetNextIdAsync();

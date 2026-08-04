@@ -108,6 +108,7 @@ public class AutofacModule : Autofac.Module
         // ── ۶. سرویس‌های پلتفرم ─────────────────────────────────────────────
         builder.RegisterType<JwtService>()         .As<IJwtService>()         .InstancePerLifetimeScope();
         builder.RegisterType<HealthRiskAnalyzer>() .As<IHealthRiskAnalyzer>() .InstancePerLifetimeScope();
+        builder.RegisterType<FamilyNotifier>()     .As<IFamilyNotifier>()     .InstancePerLifetimeScope();
 
         // ── ۷. Middleware ها ────────────────────────────────────────────────
         builder.RegisterType<CorrelationIdStartupFilter>()       .As<IStartupFilter>().SingleInstance();
@@ -118,7 +119,13 @@ public class AutofacModule : Autofac.Module
                .AsClosedTypesOf(typeof(IValidator<>))
                .InstancePerLifetimeScope();
 
+        // ترتیب ثبت = ترتیب اجرا؛ اعتبارسنجی بیرونی‌ترین لایه است تا زودتر fail کند
         builder.RegisterGeneric(typeof(ValidationBehavior<,>))
+               .As(typeof(IPipelineBehavior<,>))
+               .InstancePerLifetimeScope();
+
+        // ── ۸b. انتشار رویدادهای دامین پس از هر Command ─────────────────────
+        builder.RegisterGeneric(typeof(DomainEventDispatchBehavior<,>))
                .As(typeof(IPipelineBehavior<,>))
                .InstancePerLifetimeScope();
 

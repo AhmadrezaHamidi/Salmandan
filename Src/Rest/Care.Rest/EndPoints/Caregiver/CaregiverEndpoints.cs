@@ -13,18 +13,22 @@ public class CaregiverEndpoints : IEndpoint
             .WithTags(CaregiverConstants.Tag)
             .RequireAuthorization();
 
-        group.MapPostEndpoint<long>(  CaregiverConstants.Routes.Register,  Post,          CaregiverConstants.Names.Register,  CaregiverConstants.Docs.Register.Summary,  CaregiverConstants.Docs.Register.Description);
-        group.MapPutEndpoint(         CaregiverConstants.Routes.Documents, PutDocuments,  CaregiverConstants.Names.Documents, CaregiverConstants.Docs.Documents.Summary, CaregiverConstants.Docs.Documents.Description);
-        group.MapPutEndpoint(         CaregiverConstants.Routes.Verify,    PutVerify,     CaregiverConstants.Names.Verify,    CaregiverConstants.Docs.Verify.Summary,    CaregiverConstants.Docs.Verify.Description);
-        group.MapPutEndpoint(         CaregiverConstants.Routes.Reject,    PutReject,     CaregiverConstants.Names.Reject,    CaregiverConstants.Docs.Reject.Summary,    CaregiverConstants.Docs.Reject.Description);
-        group.MapPutEndpoint(         CaregiverConstants.Routes.Suspend,   PutSuspend,    CaregiverConstants.Names.Suspend,   CaregiverConstants.Docs.Suspend.Summary,   CaregiverConstants.Docs.Suspend.Description);
-        group.MapPutEndpoint(         CaregiverConstants.Routes.Update,    PutUpdate,     CaregiverConstants.Names.Update,    CaregiverConstants.Docs.Update.Summary,    CaregiverConstants.Docs.Update.Description);
-        group.MapPostEndpoint<bool>(  CaregiverConstants.Routes.AddSkill,  PostSkill,     CaregiverConstants.Names.AddSkill,  CaregiverConstants.Docs.AddSkill.Summary,  CaregiverConstants.Docs.AddSkill.Description);
-        group.MapDeleteEndpoint<bool>(CaregiverConstants.Routes.RemoveSkill, DeleteSkill, CaregiverConstants.Names.RemoveSkill, CaregiverConstants.Docs.RemoveSkill.Summary, CaregiverConstants.Docs.RemoveSkill.Description);
+        // مدیریت پرستار فقط دست مؤسسه است — پرستار نمی‌تواند خودش را تأیید کند
+        group.MapPostEndpoint<long>(  CaregiverConstants.Routes.Register,    Post,         CaregiverConstants.Names.Register,    CaregiverConstants.Docs.Register.Summary,    CaregiverConstants.Docs.Register.Description)   .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(         CaregiverConstants.Routes.Documents,   PutDocuments, CaregiverConstants.Names.Documents,   CaregiverConstants.Docs.Documents.Summary,   CaregiverConstants.Docs.Documents.Description)  .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(         CaregiverConstants.Routes.Verify,      PutVerify,    CaregiverConstants.Names.Verify,      CaregiverConstants.Docs.Verify.Summary,      CaregiverConstants.Docs.Verify.Description)     .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(         CaregiverConstants.Routes.Reject,      PutReject,    CaregiverConstants.Names.Reject,      CaregiverConstants.Docs.Reject.Summary,      CaregiverConstants.Docs.Reject.Description)     .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(         CaregiverConstants.Routes.Suspend,     PutSuspend,   CaregiverConstants.Names.Suspend,     CaregiverConstants.Docs.Suspend.Summary,     CaregiverConstants.Docs.Suspend.Description)    .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPutEndpoint(         CaregiverConstants.Routes.Update,      PutUpdate,    CaregiverConstants.Names.Update,      CaregiverConstants.Docs.Update.Summary,      CaregiverConstants.Docs.Update.Description)     .RequireRoles(CareRoles.AgencyStaff);
+        group.MapPostEndpoint<bool>(  CaregiverConstants.Routes.AddSkill,    PostSkill,    CaregiverConstants.Names.AddSkill,    CaregiverConstants.Docs.AddSkill.Summary,    CaregiverConstants.Docs.AddSkill.Description)   .RequireRoles(CareRoles.AgencyStaff);
+        group.MapDeleteEndpoint<bool>(CaregiverConstants.Routes.RemoveSkill, DeleteSkill,  CaregiverConstants.Names.RemoveSkill, CaregiverConstants.Docs.RemoveSkill.Summary, CaregiverConstants.Docs.RemoveSkill.Description).RequireRoles(CareRoles.AgencyStaff);
 
-        group.MapGetEndpoint<CaregiverResult>(                  CaregiverConstants.Routes.GetById,   Get,          CaregiverConstants.Names.GetById,   CaregiverConstants.Docs.GetById.Summary,   CaregiverConstants.Docs.GetById.Description);
-        group.MapGetEndpoint<PagedResult<CaregiverListItem>>(   CaregiverConstants.Routes.GetPaged,  Gets,         CaregiverConstants.Names.GetPaged,  CaregiverConstants.Docs.GetPaged.Summary,  CaregiverConstants.Docs.GetPaged.Description);
-        group.MapGetEndpoint<IReadOnlyList<CaregiverListItem>>( CaregiverConstants.Routes.Available, GetAvailable, CaregiverConstants.Names.Available, CaregiverConstants.Docs.Available.Summary, CaregiverConstants.Docs.Available.Description);
+        // خانواده باید بتواند پروفایل پرستارِ تخصیص‌یافته را ببیند
+        group.MapGetEndpoint<CaregiverResult>(CaregiverConstants.Routes.GetById, Get, CaregiverConstants.Names.GetById, CaregiverConstants.Docs.GetById.Summary, CaregiverConstants.Docs.GetById.Description);
+
+        // فهرست کامل پرستاران داده داخلی مؤسسه است
+        group.MapGetEndpoint<PagedResult<CaregiverListItem>>(   CaregiverConstants.Routes.GetPaged,  Gets,         CaregiverConstants.Names.GetPaged,  CaregiverConstants.Docs.GetPaged.Summary,  CaregiverConstants.Docs.GetPaged.Description) .RequireRoles(CareRoles.AgencyStaff);
+        group.MapGetEndpoint<IReadOnlyList<CaregiverListItem>>( CaregiverConstants.Routes.Available, GetAvailable, CaregiverConstants.Names.Available, CaregiverConstants.Docs.Available.Summary, CaregiverConstants.Docs.Available.Description).RequireRoles(CareRoles.AgencyStaff);
     }
 
     private static async Task<long> Post(long agencyId, [FromBody] RegisterCaregiverCommand cmd, ICommandBus bus, CancellationToken ct)

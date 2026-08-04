@@ -12,6 +12,7 @@
     <PackageReference Include="AhmadBase.Web"            Version="1.0.7" />
     <PackageReference Include="AhmadBase.Config"         Version="1.0.7" />
     <PackageReference Include="Ahmad.Base.Doamin"        Version="1.0.8" />
+    <PackageReference Include="AhmadBase.Event.Handler"  Version="1.0.10" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
   </ItemGroup>

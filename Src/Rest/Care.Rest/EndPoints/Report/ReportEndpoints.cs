@@ -16,10 +16,13 @@ public class ShiftReportEndpoints : IEndpoint
             .WithTags(ReportConstants.Tag)
             .RequireAuthorization();
 
-        group.MapPostEndpoint<long>(ReportConstants.Routes.Submit,     Post,           ReportConstants.Names.Submit,     ReportConstants.Docs.Submit.Summary,     ReportConstants.Docs.Submit.Description);
-        group.MapPutEndpoint(       ReportConstants.Routes.Medication, PutMedication,  ReportConstants.Names.Medication, ReportConstants.Docs.Medication.Summary, ReportConstants.Docs.Medication.Description);
-        group.MapPutEndpoint(       ReportConstants.Routes.Incident,   PutIncident,    ReportConstants.Names.Incident,   ReportConstants.Docs.Incident.Summary,   ReportConstants.Docs.Incident.Description);
-        group.MapPutEndpoint(       ReportConstants.Routes.Approve,    PutApprove,     ReportConstants.Names.Approve,    ReportConstants.Docs.Approve.Summary,    ReportConstants.Docs.Approve.Description);
+        // گزارش را فقط پرستار می‌نویسد
+        group.MapPostEndpoint<long>(ReportConstants.Routes.Submit,     Post,          ReportConstants.Names.Submit,     ReportConstants.Docs.Submit.Summary,     ReportConstants.Docs.Submit.Description)    .RequireRoles(CareRoles.CaregiverOrAdmin);
+        group.MapPutEndpoint(       ReportConstants.Routes.Medication, PutMedication, ReportConstants.Names.Medication, ReportConstants.Docs.Medication.Summary, ReportConstants.Docs.Medication.Description).RequireRoles(CareRoles.CaregiverOrAdmin);
+        group.MapPutEndpoint(       ReportConstants.Routes.Incident,   PutIncident,   ReportConstants.Names.Incident,   ReportConstants.Docs.Incident.Summary,   ReportConstants.Docs.Incident.Description)  .RequireRoles(CareRoles.CaregiverOrAdmin);
+
+        // تأیید گزارش فقط دست خانواده است — پرستار نمی‌تواند کار خودش را تأیید کند
+        group.MapPutEndpoint(ReportConstants.Routes.Approve, PutApprove, ReportConstants.Names.Approve, ReportConstants.Docs.Approve.Summary, ReportConstants.Docs.Approve.Description).RequireRoles(CareRoles.FamilyOrAdmin);
 
         group.MapGetEndpoint<ShiftReportResult>(                      ReportConstants.Routes.GetById,     Get,          ReportConstants.Names.GetById,     ReportConstants.Docs.GetById.Summary,     ReportConstants.Docs.GetById.Description);
         group.MapGetEndpoint<ShiftReportResult>(                      ReportConstants.Routes.GetByShift,  GetByShift,   ReportConstants.Names.GetByShift,  ReportConstants.Docs.GetByShift.Summary,  ReportConstants.Docs.GetByShift.Description);

@@ -61,6 +61,16 @@ public sealed class User : AggregateRoot<long>
     public void Deactivate() => Status = UserStatus.Inactive;
     public void Suspend()    => Status = UserStatus.Suspended;
 
-    /// <summary>تغییر نقش کاربر — مثلاً وقتی عضو خانواده مدیر مؤسسه هم می‌شود</summary>
+    /// <summary>تغییر نقش کاربر — فقط برای ادمین پلتفرم</summary>
     public void SetRole(UserRole role) => Role = role;
+
+    /// <summary>
+    /// ارتقای نقش هنگام ثبت به‌عنوان پرستار یا مدیر مؤسسه.
+    /// نقش ادمین هرگز تنزل نمی‌کند تا ثبت یک مؤسسه، ادمین پلتفرم را از کار نیندازد.
+    /// </summary>
+    public void PromoteTo(UserRole role)
+    {
+        if (Role == UserRole.Admin) return;
+        Role = role;
+    }
 }

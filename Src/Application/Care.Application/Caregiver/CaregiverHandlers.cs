@@ -34,13 +34,20 @@ public sealed class CaregiverHandlers(
         if (await caregiverRepo.NationalIdExistsAsync(command.NationalId, token))
             throw new DuplicateNationalIdException();
 
-        // حساب کاربری پرستار در صورت نبود ساخته می‌شود تا بتواند وارد اپ پرستار شود
+        // حساب کاربری پرستار در صورت نبود ساخته می‌شود تا بتواند وارد اپ پرستار شود.
+        // اگر شماره از قبل ثبت‌نام کرده باشد، نقشش به پرستار ارتقا می‌یابد —
+        // بدون این، کسی که قبلاً به‌عنوان خانواده وارد شده هرگز نقش پرستار نمی‌گرفت.
         var user = await userRepo.GetByPhoneAsync(command.PhoneNumber, token);
         if (user is null)
         {
             var userId = await userRepo.GetNextIdAsync();
             user = User.Create(new CreateUserArg(userId, command.PhoneNumber, UserRole.Caregiver));
             await userRepo.AddAsync(user, token);
+        }
+        else
+        {
+            user.PromoteTo(UserRole.Caregiver);
+            await userRepo.UpdateAsync(user, token);
         }
 
         var id        = await caregiverRepo.GetNextIdAsync();

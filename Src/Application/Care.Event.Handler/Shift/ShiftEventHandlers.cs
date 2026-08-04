@@ -1,3 +1,4 @@
+using Care.Application.Contract.Services;
 using Care.Domain.Events.Shift;
 
 namespace Care.Event.Handler.Shift;
@@ -16,29 +17,33 @@ public sealed class ShiftRequestedEventHandler(ILogger<ShiftRequestedEventHandle
     }
 }
 
-/// <summary>تخصیص پرستار — اطلاع به خانواده با مشخصات پرستار</summary>
-public sealed class ShiftAssignedEventHandler(ILogger<ShiftAssignedEventHandler> logger)
+/// <summary>تخصیص پرستار — اطلاع به خانواده</summary>
+public sealed class ShiftAssignedEventHandler(
+    IFamilyNotifier notifier,
+    ILogger<ShiftAssignedEventHandler> logger)
     : IEventHandlerAsync<ShiftAssignedEvent>
 {
-    public Task HandleAsync(ShiftAssignedEvent @event, CancellationToken ct)
+    public async Task HandleAsync(ShiftAssignedEvent @event, CancellationToken ct)
     {
         logger.LogInformation("پرستار {CaregiverId} به شیفت {ShiftId} تخصیص یافت",
             @event.CaregiverId, @event.ShiftId);
-        // TODO: پیامک به خانواده — نام پرستار، ساعت حضور، لینک پروفایل
-        return Task.CompletedTask;
+
+        await notifier.NotifyFamilyAsync(@event.SeniorId, NotificationTemplates.CaregiverAssigned, ct);
     }
 }
 
-/// <summary>چک‌این پرستار — اطلاع «پرستار رسید» به خانواده</summary>
-public sealed class ShiftCheckedInEventHandler(ILogger<ShiftCheckedInEventHandler> logger)
+/// <summary>چک‌این پرستار — پیامک «پرستار رسید» به خانواده</summary>
+public sealed class ShiftCheckedInEventHandler(
+    IFamilyNotifier notifier,
+    ILogger<ShiftCheckedInEventHandler> logger)
     : IEventHandlerAsync<ShiftCheckedInEvent>
 {
-    public Task HandleAsync(ShiftCheckedInEvent @event, CancellationToken ct)
+    public async Task HandleAsync(ShiftCheckedInEvent @event, CancellationToken ct)
     {
         logger.LogInformation("پرستار {CaregiverId} در شیفت {ShiftId} ساعت {CheckInAt} حاضر شد",
             @event.CaregiverId, @event.ShiftId, @event.CheckInAt);
-        // TODO: اعلان فوری به حلقه خانواده
-        return Task.CompletedTask;
+
+        await notifier.NotifyFamilyAsync(@event.SeniorId, NotificationTemplates.CaregiverArrived(@event.CheckInAt), ct);
     }
 }
 
