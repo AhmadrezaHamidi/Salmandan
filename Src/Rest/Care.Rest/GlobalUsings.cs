@@ -19,3 +19,5 @@ global using Report.Application.Commands;
 global using Report.Application.Queries;
 global using Billing.Application.Commands;
 global using Billing.Application.Queries;
+global using Payroll.Application.Commands;
+global using Payroll.Application.Queries;

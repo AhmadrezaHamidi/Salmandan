@@ -4,8 +4,12 @@ public sealed class ShiftQueryHandlers(ShiftReadRepository repo) :
     IQueryHandler<GetShiftQuery, ShiftResult?>,
     IQueryHandler<GetShiftsQuery, PagedResult<ShiftListItem>>,
     IQueryHandler<GetShiftCalendarQuery, IReadOnlyList<ShiftListItem>>,
-    IQueryHandler<GetCoverageRiskQuery, IReadOnlyList<CoverageRiskItem>>
+    IQueryHandler<GetCoverageRiskQuery, IReadOnlyList<CoverageRiskItem>>,
+    IQueryHandler<GetShiftCarePlanQuery, ShiftCarePlanResult?>
 {
+    public async Task<ShiftCarePlanResult?> HandleAsync(GetShiftCarePlanQuery query, CancellationToken ct)
+        => await repo.GetCarePlanAsync(query.ShiftId, query.ActorUserId, ct);
+
     public async Task<ShiftResult?> HandleAsync(GetShiftQuery query, CancellationToken ct)
         => await repo.GetByIdAsync(query.Id, ct);
 

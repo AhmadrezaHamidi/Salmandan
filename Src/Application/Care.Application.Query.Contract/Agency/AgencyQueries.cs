@@ -47,4 +47,7 @@ public sealed record AgencyPriceItem(
     long    Id,
     string  ServiceType,
     string  ShiftKind,
-    decimal Price);
+    decimal Price,
+    decimal CaregiverPayRate,
+    decimal Margin,
+    decimal MarginPercent);

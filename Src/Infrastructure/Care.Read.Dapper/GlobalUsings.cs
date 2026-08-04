@@ -7,3 +7,4 @@ global using Senior.Application.Queries;
 global using Shift.Application.Queries;
 global using Report.Application.Queries;
 global using Billing.Application.Queries;
+global using Payroll.Application.Queries;

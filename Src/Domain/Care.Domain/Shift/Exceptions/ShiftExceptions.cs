@@ -13,3 +13,5 @@ public sealed class ShiftDateInPastException          : BusinessException { publ
 public sealed class CheckInOutsideGeofenceException   : BusinessException { public CheckInOutsideGeofenceException()   : base(Msg.CheckInOutsideGeofenceException) { } }
 public sealed class ShiftReportRequiredException      : BusinessException { public ShiftReportRequiredException()      : base(Msg.ShiftReportRequiredException) { } }
 public sealed class CaregiverShiftOverlapException    : BusinessException { public CaregiverShiftOverlapException()    : base(Msg.CaregiverShiftOverlapException) { } }
+public sealed class ShiftNotCompletedException        : BusinessException { public ShiftNotCompletedException()        : base(Msg.ShiftNotCompletedException) { } }
+public sealed class ShiftAlreadyPaidOutException      : BusinessException { public ShiftAlreadyPaidOutException()      : base(Msg.ShiftAlreadyPaidOutException) { } }

@@ -49,6 +49,9 @@ public sealed class CareDbContext(DbContextOptions<CareDbContext> options) : DbC
     // ── Billing (پرداخت امانی) ────────────────────────────────────────────
     public DbSet<CareOrder> Orders { get; set; }
 
+    // ── Payroll ───────────────────────────────────────────────────────────
+    public DbSet<Care.Domain.Payroll.Aggregates.CaregiverPayout> Payouts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

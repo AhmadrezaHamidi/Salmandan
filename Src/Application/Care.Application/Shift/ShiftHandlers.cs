@@ -40,14 +40,15 @@ public sealed class ShiftHandlers(
 
         if (!agency.CanAcceptShifts) throw new AgencyNotActiveException();
 
-        // قیمت از تعرفه مصوب مؤسسه — نه ورودی کاربر
-        var price = agency.GetPrice(command.ServiceType, command.ShiftKind);
+        // هر دو نرخ از تعرفه مصوب مؤسسه — نه ورودی کاربر.
+        // دستمزد پرستار همین‌جا snapshot می‌شود تا تغییر بعدی تعرفه حقوق این شیفت را عوض نکند.
+        var (price, payRate) = agency.GetRates(command.ServiceType, command.ShiftKind);
 
         var id    = await shiftRepo.GetNextIdAsync();
         var shift = CareShift.Request(new CreateShiftArg(
             id, command.SeniorId, command.AgencyId, command.RequestedByUserId,
             command.ServiceType, command.ShiftKind, command.Date,
-            command.StartTime, command.EndTime, price, command.FamilyNote));
+            command.StartTime, command.EndTime, price, payRate, command.FamilyNote));
 
         await shiftRepo.AddAsync(shift, token);
         await db.SaveChangesAsync(token);
@@ -160,7 +161,7 @@ public sealed class ShiftHandlers(
         var replacement = CareShift.Request(new CreateShiftArg(
             newId, original.SeniorId, original.AgencyId, original.RequestedByUserId,
             original.ServiceType, original.ShiftKind, original.Date,
-            original.StartTime, original.EndTime, original.Price,
+            original.StartTime, original.EndTime, original.Price, original.CaregiverPayRate,
             original.FamilyNote, ReplacesShiftId: original.Id));
 
         await AssignAsync(replacement, command.ReplacementCaregiverId, token);

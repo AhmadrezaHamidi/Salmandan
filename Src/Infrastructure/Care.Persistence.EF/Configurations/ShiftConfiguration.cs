@@ -21,12 +21,19 @@ public sealed class ShiftConfiguration : IEntityTypeConfiguration<CareShift>
         builder.Property(x => x.StartTime).HasColumnType("time").IsRequired();
         builder.Property(x => x.EndTime).HasColumnType("time").IsRequired();
         builder.Property(x => x.Price).HasPrecision(18, 0);
+        builder.Property(x => x.CaregiverPayRate).HasPrecision(18, 0);
         builder.Property(x => x.CancelReason).HasMaxLength(500);
         builder.Property(x => x.FamilyNote).HasMaxLength(1000);
 
         builder.Ignore(x => x.DurationHours);
         builder.Ignore(x => x.StartsAt);
         builder.Ignore(x => x.IsCancellable);
+        builder.Ignore(x => x.Margin);
+        builder.Ignore(x => x.WorkedHours);
+        builder.Ignore(x => x.IsPaidOut);
+
+        // پایه‌ی کوئری حقوق: شیفت تکمیل‌شده‌ی هنوز پرداخت‌نشده
+        builder.HasIndex(x => new { x.AgencyId, x.Status, x.PayoutId });
 
         builder.HasIndex(x => new { x.SeniorId, x.Date });
         builder.HasIndex(x => new { x.AgencyId, x.Status });

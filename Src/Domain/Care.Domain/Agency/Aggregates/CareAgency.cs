@@ -126,22 +126,25 @@ public sealed class CareAgency : AggregateRoot<long>
         CommissionPercent = percent;
     }
 
-    /// <summary>ثبت یا بروزرسانی قیمت یک نوع خدمت</summary>
-    public void SetServicePrice(long priceId, CareServiceType serviceType, ShiftKind shiftKind, decimal price)
+    /// <summary>ثبت یا بروزرسانی تعرفه یک نوع خدمت — مبلغ خانواده و دستمزد پرستار</summary>
+    public void SetServicePrice(long priceId, CareServiceType serviceType, ShiftKind shiftKind,
+                                decimal price, decimal caregiverPayRate)
     {
-        if (price <= 0) throw new InvalidServicePriceException();
-
         var existing = _prices.FirstOrDefault(p => p.ServiceType == serviceType && p.ShiftKind == shiftKind);
         if (existing is not null)
-            existing.ChangePrice(price);
+            existing.ChangeRates(price, caregiverPayRate);
         else
-            _prices.Add(new AgencyServicePrice(priceId, Id, serviceType, shiftKind, price));
+            _prices.Add(new AgencyServicePrice(priceId, Id, serviceType, shiftKind, price, caregiverPayRate));
     }
 
-    /// <summary>دریافت قیمت مصوب مؤسسه برای یک خدمت</summary>
-    public decimal GetPrice(CareServiceType serviceType, ShiftKind shiftKind)
-        => _prices.FirstOrDefault(p => p.ServiceType == serviceType && p.ShiftKind == shiftKind)?.Price
-           ?? throw new ServicePriceNotFoundException();
+    /// <summary>تعرفه مصوب مؤسسه برای یک خدمت — مبلغ خانواده و دستمزد پرستار با هم</summary>
+    public (decimal Price, decimal CaregiverPayRate) GetRates(CareServiceType serviceType, ShiftKind shiftKind)
+    {
+        var tariff = _prices.FirstOrDefault(p => p.ServiceType == serviceType && p.ShiftKind == shiftKind)
+            ?? throw new ServicePriceNotFoundException();
+
+        return (tariff.Price, tariff.CaregiverPayRate);
+    }
 
     /// <summary>ثبت امتیاز جدید پس از تکمیل شیفت</summary>
     public void AddRating(int score)

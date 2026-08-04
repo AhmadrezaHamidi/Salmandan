@@ -72,6 +72,16 @@
   <data name="InvalidServicePriceException" xml:space="preserve"><value>قیمت خدمت باید بزرگ‌تر از صفر باشد.</value></data>
   <data name="ServicePriceNotFoundException" xml:space="preserve"><value>قیمت مصوب برای این خدمت در مؤسسه ثبت نشده است.</value></data>
   <data name="InvalidRatingException" xml:space="preserve"><value>امتیاز باید بین ۱ تا ۵ باشد.</value></data>
+  <data name="InvalidPayRateException" xml:space="preserve"><value>دستمزد پرستار باید بزرگ‌تر از صفر باشد.</value></data>
+  <data name="PayRateExceedsPriceException" xml:space="preserve"><value>دستمزد پرستار نمی‌تواند از مبلغ دریافتی از خانواده بیشتر یا مساوی باشد.</value></data>
+
+  <!-- ── Payroll (حقوق پرستار) ── -->
+  <data name="PayoutNotFoundException" xml:space="preserve"><value>فیش حقوقی مورد نظر یافت نشد.</value></data>
+  <data name="PayoutAlreadyPaidException" xml:space="preserve"><value>این فیش حقوقی قبلاً پرداخت شده است.</value></data>
+  <data name="PayoutCancelledException" xml:space="preserve"><value>این فیش حقوقی لغو شده است.</value></data>
+  <data name="InvalidPayoutPeriodException" xml:space="preserve"><value>بازه فیش حقوقی معتبر نیست.</value></data>
+  <data name="NoShiftsToPayException" xml:space="preserve"><value>در این بازه شیفت تکمیل‌شده‌ی پرداخت‌نشده‌ای وجود ندارد.</value></data>
+  <data name="PaymentReferenceRequiredException" xml:space="preserve"><value>شماره پیگیری واریز الزامی است.</value></data>
 
   <!-- ── Caregiver (پرستار) ── -->
   <data name="CaregiverNotFoundException" xml:space="preserve"><value>پرستار مورد نظر یافت نشد.</value></data>
@@ -109,6 +119,9 @@
   <data name="CheckInOutsideGeofenceException" xml:space="preserve"><value>ثبت ورود فقط در محل منزل سالمند امکان‌پذیر است.</value></data>
   <data name="ShiftReportRequiredException" xml:space="preserve"><value>تا ثبت گزارش پایان شیفت، امکان تکمیل شیفت وجود ندارد.</value></data>
   <data name="CaregiverShiftOverlapException" xml:space="preserve"><value>پرستار در این بازه زمانی شیفت دیگری دارد.</value></data>
+  <data name="ShiftNotCompletedException" xml:space="preserve"><value>فقط شیفت تکمیل‌شده در فیش حقوقی حساب می‌شود.</value></data>
+  <data name="ShiftAlreadyPaidOutException" xml:space="preserve"><value>دستمزد این شیفت قبلاً در فیش حقوقی حساب شده است.</value></data>
+  <data name="ShiftAccessDeniedException" xml:space="preserve"><value>شما به این شیفت دسترسی ندارید.</value></data>
 
   <!-- ── Shift Report (گزارش شیفت) ── -->
   <data name="ReportNotFoundException" xml:space="preserve"><value>گزارش شیفت مورد نظر یافت نشد.</value></data>

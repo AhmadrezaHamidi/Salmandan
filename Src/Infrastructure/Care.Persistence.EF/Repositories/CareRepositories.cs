@@ -9,6 +9,8 @@ using Care.Domain.Caregiver.Aggregates;
 using Care.Domain.Caregiver.Entities;
 using Care.Domain.Caregiver.Enums;
 using Care.Domain.Caregiver.Repositories;
+using Care.Domain.Payroll.Aggregates;
+using Care.Domain.Payroll.Repositories;
 using Care.Domain.Report.Aggregates;
 using Care.Domain.Report.Entities;
 using Care.Domain.Report.Repositories;
@@ -217,7 +219,39 @@ public sealed class ShiftRepository(CareDbContext db, IHiLoIdGenerator hiLo) : I
         return Task.CompletedTask;
     }
 
+    public Task<List<CareShift>> GetUnpaidCompletedAsync(long agencyId, DateOnly from, DateOnly to, CancellationToken ct = default)
+        => db.Shifts
+            .Where(s => s.AgencyId == agencyId
+                     && s.Status == ShiftStatus.Completed
+                     && s.PayoutId == null
+                     && s.Date >= from && s.Date <= to)
+            .OrderBy(s => s.CaregiverId).ThenBy(s => s.Date)
+            .ToListAsync(ct);
+
+    public Task<List<CareShift>> GetByPayoutAsync(long payoutId, CancellationToken ct = default)
+        => db.Shifts.Where(s => s.PayoutId == payoutId).ToListAsync(ct);
+
     public Task<long> GetNextIdAsync() => Task.FromResult(hiLo.GetNextId<CareShift>());
+}
+
+public sealed class PayoutRepository(CareDbContext db, IHiLoIdGenerator hiLo) : IPayoutRepository
+{
+    public Task<CaregiverPayout?> GetByIdAsync(long id, CancellationToken ct = default)
+        => db.Payouts.FirstOrDefaultAsync(p => p.Id == id, ct);
+
+    public Task<List<CaregiverPayout>> GetByAgencyAsync(long agencyId, CancellationToken ct = default)
+        => db.Payouts.Where(p => p.AgencyId == agencyId).OrderByDescending(p => p.CreatedAt).ToListAsync(ct);
+
+    public async Task AddAsync(CaregiverPayout payout, CancellationToken ct = default)
+        => await db.Payouts.AddAsync(payout, ct);
+
+    public Task UpdateAsync(CaregiverPayout payout, CancellationToken ct = default)
+    {
+        db.Payouts.Update(payout);
+        return Task.CompletedTask;
+    }
+
+    public Task<long> GetNextIdAsync() => Task.FromResult(hiLo.GetNextId<CaregiverPayout>());
 }
 
 public sealed class ShiftReportRepository(CareDbContext db, IHiLoIdGenerator hiLo) : IShiftReportRepository

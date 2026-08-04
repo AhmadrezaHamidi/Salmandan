@@ -43,9 +43,13 @@ public record SetAgencyCommissionCommand(
     [property: JsonIgnore] long AgencyId,
     decimal CommissionPercent) : ICommand<bool>;
 
-/// <summary>ثبت یا بروزرسانی قیمت یک خدمت</summary>
+/// <summary>
+/// ثبت یا بروزرسانی تعرفه یک خدمت.
+/// هر دو نرخ لازم است: مبلغ خانواده و دستمزد پرستار — تا حاشیه سود قابل محاسبه باشد.
+/// </summary>
 public record SetAgencyServicePriceCommand(
     [property: JsonIgnore] long AgencyId,
     CareServiceType ServiceType,
     ShiftKind       ShiftKind,
-    decimal         Price) : ICommand<bool>;
+    decimal         Price,
+    decimal         CaregiverPayRate) : ICommand<bool>;

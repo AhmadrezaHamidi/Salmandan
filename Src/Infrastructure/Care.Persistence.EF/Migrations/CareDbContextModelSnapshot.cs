@@ -116,6 +116,10 @@ namespace Care.Persistence.EF.Migrations
                     b.Property<long>("AgencyId")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("CaregiverPayRate")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18)
                         .HasColumnType("decimal(18,0)");
@@ -456,6 +460,71 @@ namespace Care.Persistence.EF.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Care.Domain.Payroll.Aggregates.CaregiverPayout", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AgencyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("CaregiverId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset>("CreationTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("ModificationTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateOnly>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ShiftCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
+
+                    b.Property<decimal>("TotalHours")
+                        .HasPrecision(9, 2)
+                        .HasColumnType("decimal(9,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgencyId", "Status");
+
+                    b.HasIndex("CaregiverId", "PeriodFrom");
+
+                    b.ToTable("Payouts", (string)null);
                 });
 
             modelBuilder.Entity("Care.Domain.Report.Aggregates.ShiftReport", b =>
@@ -856,6 +925,10 @@ namespace Care.Persistence.EF.Migrations
                     b.Property<long?>("CaregiverId")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("CaregiverPayRate")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
+
                     b.Property<DateTime?>("CheckInAt")
                         .HasColumnType("datetime2");
 
@@ -892,6 +965,9 @@ namespace Care.Persistence.EF.Migrations
 
                     b.Property<DateTimeOffset?>("ModificationTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<long?>("PayoutId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18)
@@ -933,6 +1009,8 @@ namespace Care.Persistence.EF.Migrations
                     b.HasIndex("SeniorId", "Date");
 
                     b.HasIndex("Status", "Date");
+
+                    b.HasIndex("AgencyId", "Status", "PayoutId");
 
                     b.ToTable("Shifts", (string)null);
                 });

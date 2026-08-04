@@ -57,7 +57,7 @@ $owner = Step "ورود مجدد مالک پس از ارتقای نقش به م�
 Step "نقش مالک به AgencyManager تغییر کرد" { if ($owner.role -ne "AgencyManager") { throw "role=$($owner.role)" }; $true }
 Step "ثبت تعرفه خدمت (PersonalCare/Daily)" {
     Invoke-RestMethod "$base/Agencies/$agencyId/Prices" -Method Post -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{
-        serviceType=2; shiftKind=2; price=3500000
+        serviceType=2; shiftKind=2; price=3500000; caregiverPayRate=2200000
     } | ConvertTo-Json)
 }
 Step "خواندن تعرفه‌ها" {
@@ -297,6 +297,87 @@ Denied "خانواده نمی‌تواند چک‌این بزند" 403 { Invoke-
 Denied "خانواده نمی‌تواند فهرست پرستاران را ببیند" 403 { Invoke-RestMethod "$base/Caregivers?page=1&pageSize=5" -Headers (Hdr $family.accessToken) }
 Denied "پرستار نمی‌تواند شیفت تخصیص دهد" 403 { Invoke-RestMethod "$base/Shifts/$shiftId/Assign" -Method Put -Headers (Hdr $nurse.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{caregiverId=$caregiverId} | ConvertTo-Json) }
 Denied "خانواده نمی‌تواند وضعیت مالی مؤسسه را ببیند" 403 { Invoke-RestMethod "$base/Agencies/$agencyId/Balance" -Headers (Hdr $family.accessToken) }
+Write-Host "`n=== 11. تعرفه دوگانه و حاشیه سود ===" -ForegroundColor Cyan
+Step "تعرفه هر دو نرخ و حاشیه سود را برمی‌گرداند" {
+    $pr = Invoke-RestMethod "$base/Agencies/$agencyId/Prices" -Headers (Hdr $owner.accessToken)
+    $t = $pr | Select-Object -First 1
+    if ($t.price -ne 3500000)            { throw "price=$($t.price)" }
+    if ($t.caregiverPayRate -ne 2200000) { throw "payRate=$($t.caregiverPayRate)" }
+    if ($t.margin -ne 1300000)           { throw "margin=$($t.margin)" }
+    $t
+}
+Step "دستمزد بیشتر از مبلغ خانواده رد می‌شود (قاعده ضدزیان)" {
+    try { Invoke-RestMethod "$base/Agencies/$agencyId/Prices" -Method Post -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{
+        serviceType=1; shiftKind=1; price=1000000; caregiverPayRate=1500000 } | ConvertTo-Json); throw "SHOULD_FAIL" }
+    catch { if ($_.Exception.Message -eq "SHOULD_FAIL") { throw "تعرفه زیان‌ده پذیرفته شد!" }; $true }
+}
+
+Write-Host "`n=== 12. حقوق پرستار ===" -ForegroundColor Cyan
+Step "پیش‌نمایش حقوق شیفت تکمیل‌شده را نشان می‌دهد" {
+    $pv = Invoke-RestMethod "$base/Payouts/Preview?agencyId=$agencyId&from=$today&to=$today" -Headers (Hdr $owner.accessToken)
+    if ($pv.Count -lt 1) { throw "پیش‌نمایش خالی" }
+    if ($pv[0].totalAmount -ne 2200000) { throw "amount=$($pv[0].totalAmount)" }
+    $pv
+}
+$payroll = Step "صدور فیش حقوقی" {
+    Invoke-RestMethod "$base/Payouts/Generate" -Method Post -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{
+        agencyId=$agencyId; from=$today; to=$today } | ConvertTo-Json)
+}
+Step "فیش با مبلغ درست صادر شد" {
+    if ($payroll.payoutCount -lt 1)      { throw "payoutCount=$($payroll.payoutCount)" }
+    if ($payroll.totalAmount -ne 2200000){ throw "total=$($payroll.totalAmount)" }
+    $payroll
+}
+$payoutId = $payroll.payoutIds[0]
+Step "جزئیات فیش شامل ریز شیفت‌ها و ساعت کارکرد واقعی است" {
+    $po = Invoke-RestMethod "$base/Payouts/$payoutId" -Headers (Hdr $owner.accessToken)
+    if ($po.shifts.Count -lt 1) { throw "ریز شیفت خالی" }
+    if ($po.status -ne "Pending") { throw "status=$($po.status)" }
+    $po
+}
+Step "پرداخت دوباره‌ی همان شیفت ممکن نیست" {
+    try { Invoke-RestMethod "$base/Payouts/Generate" -Method Post -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{
+        agencyId=$agencyId; from=$today; to=$today } | ConvertTo-Json); throw "SHOULD_FAIL" }
+    catch { if ($_.Exception.Message -eq "SHOULD_FAIL") { throw "شیفت دوباره پرداخت شد!" }; $true }
+}
+Step "ثبت واریز حقوق" {
+    Invoke-RestMethod "$base/Payouts/$payoutId/Pay" -Method Put -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{paymentReference="TRK-123456"} | ConvertTo-Json)
+}
+Step "واریز دوباره رد می‌شود" {
+    try { Invoke-RestMethod "$base/Payouts/$payoutId/Pay" -Method Put -Headers (Hdr $owner.accessToken) -ContentType "application/json; charset=utf-8" -Body (@{paymentReference="TRK-999"} | ConvertTo-Json); throw "SHOULD_FAIL" }
+    catch { if ($_.Exception.Message -eq "SHOULD_FAIL") { throw "واریز تکراری پذیرفته شد" }; $true }
+}
+Step "پرستار فیش خودش را می‌بیند" {
+    $po = Invoke-RestMethod "$base/Payouts/$payoutId" -Headers (Hdr $nurse.accessToken)
+    if ($po.status -ne "Paid") { throw "status=$($po.status)" }; $po
+}
+Step "سود و زیان مؤسسه محاسبه می‌شود" {
+    $pf = Invoke-RestMethod "$base/Payouts/Profit?agencyId=$agencyId&from=$today&to=$today" -Headers (Hdr $owner.accessToken)
+    if ($pf.revenue -ne 3500000)      { throw "revenue=$($pf.revenue)" }
+    if ($pf.caregiverCost -ne 2200000){ throw "cost=$($pf.caregiverCost)" }
+    if ($pf.grossProfit -ne 1300000)  { throw "profit=$($pf.grossProfit)" }
+    $pf
+}
+
+Write-Host "`n=== 13. پرونده مراقبت برای پرستار ===" -ForegroundColor Cyan
+Step "پرستار پرونده مراقبت شیفت خودش را می‌بیند" {
+    $cp = Invoke-RestMethod "$base/Shifts/$shiftId/CarePlan" -Headers (Hdr $nurse.accessToken)
+    if ($cp.medications.Count -lt 1) { throw "دارو در پرونده نیست" }
+    if ($cp.allergies.Count -lt 1)   { throw "حساسیت در پرونده نیست" }
+    if (-not $cp.seniorFullName)     { throw "نام سالمند خالی" }
+    $cp
+}
+
+Write-Host "`n=== 14. کنترل مالکیت رکورد (IDOR) ===" -ForegroundColor Cyan
+$other = Step "ورود خانواده‌ی دیگر" { Login "0916000$rand" }
+Denied "خانواده دیگر شیفت ما را نمی‌بیند" 422 { Invoke-RestMethod "$base/Shifts/$shiftId" -Headers (Hdr $other.accessToken) }
+Denied "خانواده دیگر گزارش ما را نمی‌بیند" 422 { Invoke-RestMethod "$base/ShiftReports/$reportId" -Headers (Hdr $other.accessToken) }
+Denied "خانواده دیگر تایم‌لاین سالمند ما را نمی‌بیند" 422 { Invoke-RestMethod "$base/ShiftReports/Senior/$seniorId/Timeline?count=5" -Headers (Hdr $other.accessToken) }
+Denied "خانواده دیگر تحلیل ریسک ما را نمی‌بیند" 422 { Invoke-RestMethod "$base/ShiftReports/Senior/$seniorId/HealthRisk" -Headers (Hdr $other.accessToken) }
+Denied "خانواده دیگر تقویم سالمند ما را نمی‌بیند" 422 { Invoke-RestMethod "$base/Shifts/Calendar?seniorId=$seniorId&from=$today&to=$today" -Headers (Hdr $other.accessToken) }
+Denied "خانواده نمی‌تواند فیش حقوقی پرستار را ببیند" 422 { Invoke-RestMethod "$base/Payouts/$payoutId" -Headers (Hdr $family.accessToken) }
+Denied "مؤسسه دیگر نمی‌تواند حقوق ما را صادر کند" 403 { Invoke-RestMethod "$base/Payouts/Preview?agencyId=$agencyId&from=$today&to=$today" -Headers (Hdr $other.accessToken) }
+Step "خانواده صاحب پرونده شیفت خودش را می‌بیند" { Invoke-RestMethod "$base/Shifts/$shiftId" -Headers (Hdr $family.accessToken) }
 Write-Host "`n────────────────────────────────" -ForegroundColor Cyan
 Write-Host "PASS: $pass   FAIL: $fail" -ForegroundColor $(if($fail -eq 0){"Green"}else{"Red"})
 if ($risk) { Write-Host "`nتحلیل ریسک: [$($risk.riskLevel)/$($risk.riskScore)] $($risk.summary)" -ForegroundColor Yellow }

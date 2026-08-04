@@ -16,6 +16,12 @@ public interface IShiftRepository
     /// <summary>شیفت‌هایی که پرستار تخصیص نیافته و زمانشان نزدیک است — پایه‌ی هشدار پوشش</summary>
     Task<List<CareShift>> GetUnassignedUpcomingAsync(DateTime until, CancellationToken ct = default);
 
+    /// <summary>شیفت‌های تکمیل‌شده‌ای که هنوز در هیچ فیش حقوقی حساب نشده‌اند</summary>
+    Task<List<CareShift>> GetUnpaidCompletedAsync(long agencyId, DateOnly from, DateOnly to, CancellationToken ct = default);
+
+    /// <summary>شیفت‌های یک فیش حقوقی — برای آزادسازی هنگام لغو فیش</summary>
+    Task<List<CareShift>> GetByPayoutAsync(long payoutId, CancellationToken ct = default);
+
     Task                  AddAsync(CareShift shift, CancellationToken ct = default);
     Task                  UpdateAsync(CareShift shift, CancellationToken ct = default);
     Task<long>            GetNextIdAsync();

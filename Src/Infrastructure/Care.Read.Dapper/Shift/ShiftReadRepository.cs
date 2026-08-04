@@ -72,6 +72,68 @@ public sealed class ShiftReadRepository(IDbConnection conn)
     }
 
     /// <summary>
+    /// پرونده مراقبت برای پرستارِ همین شیفت.
+    /// اگر کاربر پرستارِ تخصیص‌یافته‌ی این شیفت نباشد، null برمی‌گردد.
+    /// </summary>
+    public async Task<ShiftCarePlanResult?> GetCarePlanAsync(long shiftId, long actorUserId, CancellationToken ct = default)
+    {
+        const string sql = """
+            SELECT s.Id AS ShiftId, sr.Id AS SeniorId, sr.FullName AS SeniorFullName,
+                   sr.BirthDate, sr.Gender, sr.DependencyLevel, sr.Address, sr.Notes
+            FROM Shifts s
+            INNER JOIN Seniors    sr ON sr.Id = s.SeniorId
+            INNER JOIN Caregivers c  ON c.Id  = s.CaregiverId
+            WHERE s.Id = @ShiftId
+              AND s.IsDeleted = 0
+              AND c.UserId = @ActorUserId
+              AND s.Status IN ('Assigned', 'CheckedIn', 'CheckedOut', 'Completed');
+
+            SELECT co.Id, co.Title, co.Description, co.DiagnosedAt, co.IsChronic
+            FROM MedicalConditions co
+            INNER JOIN Shifts s ON s.SeniorId = co.SeniorId
+            WHERE s.Id = @ShiftId;
+
+            SELECT m.Id, m.Name, m.Dosage, m.Frequency, m.Instruction, m.StartDate, m.EndDate, m.IsActive
+            FROM Medications m
+            INNER JOIN Shifts s ON s.SeniorId = m.SeniorId
+            WHERE s.Id = @ShiftId AND m.IsActive = 1;
+
+            SELECT a.Id, a.Title, a.Reaction
+            FROM Allergies a
+            INNER JOIN Shifts s ON s.SeniorId = a.SeniorId
+            WHERE s.Id = @ShiftId;
+
+            SELECT e.Id, e.FullName, e.PhoneNumber, e.Relation, e.Priority
+            FROM EmergencyContacts e
+            INNER JOIN Shifts s ON s.SeniorId = e.SeniorId
+            WHERE s.Id = @ShiftId ORDER BY e.Priority;
+            """;
+
+        using var multi = await conn.QueryMultipleAsync(sql, new { ShiftId = shiftId, ActorUserId = actorUserId });
+
+        var head = await multi.ReadFirstOrDefaultAsync<CarePlanHeadRow>();
+        if (head is null) return null;
+
+        var conditions  = (await multi.ReadAsync<ConditionItem>()).ToList();
+        var medications = (await multi.ReadAsync<MedicationItem>()).ToList();
+        var allergies   = (await multi.ReadAsync<AllergyItem>()).ToList();
+        var contacts    = (await multi.ReadAsync<EmergencyContactItem>()).ToList();
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var age   = today.Year - head.BirthDate.Year;
+        if (head.BirthDate > today.AddYears(-age)) age--;
+
+        return new ShiftCarePlanResult(
+            head.ShiftId, head.SeniorId, head.SeniorFullName, age, head.Gender,
+            head.DependencyLevel, head.Address, head.Notes,
+            conditions, medications, allergies, contacts);
+    }
+
+    private sealed record CarePlanHeadRow(
+        long ShiftId, long SeniorId, string SeniorFullName, DateOnly BirthDate,
+        string Gender, string DependencyLevel, string Address, string? Notes);
+
+    /// <summary>
     /// شیفت‌های بدون پرستار که تا N ساعت آینده شروع می‌شوند.
     /// داشبورد ریسک پوشش — قبل از اینکه خانواده متوجه شود، مؤسسه هشدار می‌گیرد.
     /// </summary>

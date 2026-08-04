@@ -15,11 +15,9 @@ namespace Care.Domain.Resources {
         private static global::System.Resources.ResourceManager resourceMan;
         private static global::System.Globalization.CultureInfo resourceCulture;
 
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Message() {
         }
 
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
@@ -30,7 +28,6 @@ namespace Care.Domain.Resources {
             }
         }
 
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
             get { return resourceCulture; }
             set { resourceCulture = value; }
@@ -106,6 +103,38 @@ namespace Care.Domain.Resources {
 
         internal static string InvalidRatingException {
             get { return ResourceManager.GetString("InvalidRatingException", resourceCulture); }
+        }
+
+        internal static string InvalidPayRateException {
+            get { return ResourceManager.GetString("InvalidPayRateException", resourceCulture); }
+        }
+
+        internal static string PayRateExceedsPriceException {
+            get { return ResourceManager.GetString("PayRateExceedsPriceException", resourceCulture); }
+        }
+
+        internal static string PayoutNotFoundException {
+            get { return ResourceManager.GetString("PayoutNotFoundException", resourceCulture); }
+        }
+
+        internal static string PayoutAlreadyPaidException {
+            get { return ResourceManager.GetString("PayoutAlreadyPaidException", resourceCulture); }
+        }
+
+        internal static string PayoutCancelledException {
+            get { return ResourceManager.GetString("PayoutCancelledException", resourceCulture); }
+        }
+
+        internal static string InvalidPayoutPeriodException {
+            get { return ResourceManager.GetString("InvalidPayoutPeriodException", resourceCulture); }
+        }
+
+        internal static string NoShiftsToPayException {
+            get { return ResourceManager.GetString("NoShiftsToPayException", resourceCulture); }
+        }
+
+        internal static string PaymentReferenceRequiredException {
+            get { return ResourceManager.GetString("PaymentReferenceRequiredException", resourceCulture); }
         }
 
         internal static string CaregiverNotFoundException {
@@ -230,6 +259,18 @@ namespace Care.Domain.Resources {
 
         internal static string CaregiverShiftOverlapException {
             get { return ResourceManager.GetString("CaregiverShiftOverlapException", resourceCulture); }
+        }
+
+        internal static string ShiftNotCompletedException {
+            get { return ResourceManager.GetString("ShiftNotCompletedException", resourceCulture); }
+        }
+
+        internal static string ShiftAlreadyPaidOutException {
+            get { return ResourceManager.GetString("ShiftAlreadyPaidOutException", resourceCulture); }
+        }
+
+        internal static string ShiftAccessDeniedException {
+            get { return ResourceManager.GetString("ShiftAccessDeniedException", resourceCulture); }
         }
 
         internal static string ReportNotFoundException {

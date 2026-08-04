@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Care.Application.Contract.Services;
 using Care.Rest.EndPoints.Shift;
 
 namespace Care.Rest.EndPoints;
@@ -34,6 +36,9 @@ public class ShiftEndpoints : IEndpoint
 
         // داشبورد عملیاتی مؤسسه
         group.MapGetEndpoint<IReadOnlyList<CoverageRiskItem>>(ShiftConstants.Routes.CoverageRisk, GetCoverageRisk, ShiftConstants.Names.CoverageRisk, ShiftConstants.Docs.CoverageRisk.Summary, ShiftConstants.Docs.CoverageRisk.Description).RequireRoles(CareRoles.AgencyStaff);
+
+        // پرونده مراقبت برای پرستارِ همین شیفت
+        group.MapGetEndpoint<ShiftCarePlanResult>(ShiftConstants.Routes.CarePlan, GetCarePlan, ShiftConstants.Names.CarePlan, ShiftConstants.Docs.CarePlan.Summary, ShiftConstants.Docs.CarePlan.Description).RequireRoles(CareRoles.CaregiverOrAdmin);
     }
 
     private static async Task<long> Post([FromBody] RequestShiftCommand cmd, IUserContext user, ICommandBus bus, CancellationToken ct)
@@ -60,14 +65,40 @@ public class ShiftEndpoints : IEndpoint
     private static async Task<long> PostReplace(long id, [FromBody] ReplaceShiftCommand cmd, ICommandBus bus, CancellationToken ct)
         => await bus.Dispatch<long>(cmd with { ShiftId = id }, ct);
 
-    private static async Task<ShiftResult?> Get(long id, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<ShiftResult?>(new GetShiftQuery(id), ct);
+    private static async Task<ShiftResult?> Get(
+        long id, IUserContext user, ClaimsPrincipal principal, ICareAccessGuard guard,
+        IQueryBus bus, CancellationToken ct)
+    {
+        // مالکیت رکورد قبل از برگرداندن داده — نقش به‌تنهایی جلوی حدس زدن شناسه را نمی‌گیرد
+        await guard.EnsureCanViewShiftAsync(id, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<ShiftResult?>(new GetShiftQuery(id), ct);
+    }
 
-    private static async Task<PagedResult<ShiftListItem>> Gets([AsParameters] GetShiftsQuery query, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<PagedResult<ShiftListItem>>(query, ct);
+    private static async Task<PagedResult<ShiftListItem>> Gets(
+        [AsParameters] GetShiftsQuery query, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        if (query.SeniorId.HasValue)
+            await guard.EnsureCanViewSeniorAsync(query.SeniorId.Value, user.UserId, principal.RoleOf(), ct);
+        else if (query.AgencyId.HasValue)
+            await guard.EnsureOwnsAgencyAsync(query.AgencyId.Value, user.UserId, principal.RoleOf(), ct);
+        else
+            throw new UnauthorizedAccessException();
 
-    private static async Task<IReadOnlyList<ShiftListItem>> GetCalendar([AsParameters] GetShiftCalendarQuery query, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<IReadOnlyList<ShiftListItem>>(query, ct);
+        return await bus.DispatchAsync<PagedResult<ShiftListItem>>(query, ct);
+    }
+
+    private static async Task<IReadOnlyList<ShiftListItem>> GetCalendar(
+        [AsParameters] GetShiftCalendarQuery query, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewSeniorAsync(query.SeniorId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<IReadOnlyList<ShiftListItem>>(query, ct);
+    }
+
+    private static async Task<ShiftCarePlanResult?> GetCarePlan(
+        long id, IUserContext user, IQueryBus bus, CancellationToken ct)
+        => await bus.DispatchAsync<ShiftCarePlanResult?>(new GetShiftCarePlanQuery(id, user.UserId), ct);
 
     private static async Task<IReadOnlyList<CoverageRiskItem>> GetCoverageRisk([AsParameters] GetCoverageRiskQuery query, IQueryBus bus, CancellationToken ct)
         => await bus.DispatchAsync<IReadOnlyList<CoverageRiskItem>>(query, ct);

@@ -11,4 +11,6 @@ public sealed class DuplicateLicenseNumberException : BusinessException { public
 public sealed class InvalidCommissionException      : BusinessException { public InvalidCommissionException()      : base(Msg.InvalidCommissionException) { } }
 public sealed class InvalidServicePriceException    : BusinessException { public InvalidServicePriceException()    : base(Msg.InvalidServicePriceException) { } }
 public sealed class ServicePriceNotFoundException   : BusinessException { public ServicePriceNotFoundException()   : base(Msg.ServicePriceNotFoundException) { } }
+public sealed class InvalidPayRateException         : BusinessException { public InvalidPayRateException()         : base(Msg.InvalidPayRateException) { } }
+public sealed class PayRateExceedsPriceException    : BusinessException { public PayRateExceedsPriceException()    : base(Msg.PayRateExceedsPriceException) { } }
 public sealed class InvalidRatingException          : BusinessException { public InvalidRatingException()          : base(Msg.InvalidRatingException) { } }

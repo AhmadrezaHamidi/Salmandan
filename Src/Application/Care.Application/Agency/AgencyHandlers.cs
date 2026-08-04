@@ -91,7 +91,8 @@ public sealed class AgencyHandlers(
     {
         var agency  = await GetAgencyAsync(command.AgencyId, token);
         var priceId = await agencyRepo.GetNextPriceIdAsync();
-        agency.SetServicePrice(priceId, command.ServiceType, command.ShiftKind, command.Price);
+        agency.SetServicePrice(priceId, command.ServiceType, command.ShiftKind,
+                               command.Price, command.CaregiverPayRate);
         return await SaveAsync(agency, token);
     }
 

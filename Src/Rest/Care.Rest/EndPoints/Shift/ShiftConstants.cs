@@ -17,6 +17,7 @@ public static class ShiftConstants
         public const string Cancel       = "/{id}/Cancel";
         public const string NoShow       = "/{id}/NoShow";
         public const string Replace      = "/{id}/Replace";
+        public const string CarePlan     = "/{id}/CarePlan";
     }
 
     public static class Names
@@ -34,6 +35,7 @@ public static class ShiftConstants
         public const string Cancel       = P + "Cancel";
         public const string NoShow       = P + "MarkNoShow";
         public const string Replace      = P + "Replace";
+        public const string CarePlan     = P + "CarePlan";
     }
 
     public const string Tag = "Shifts";
@@ -52,5 +54,6 @@ public static class ShiftConstants
         public static class Cancel       { public const string Summary = "لغو شیفت";            public const string Description = "لغو شیفت توسط خانواده، مؤسسه یا پلتفرم"; }
         public static class NoShow       { public const string Summary = "ثبت عدم حضور";        public const string Description = "ثبت عدم حضور پرستار — آغاز فرآیند تضمین پوشش شیفت"; }
         public static class Replace      { public const string Summary = "شیفت جایگزین";        public const string Description = "ساخت شیفت جایگزین با پرستار دیگر و همان مبلغ"; }
+        public static class CarePlan     { public const string Summary = "پرونده مراقبت شیفت";  public const string Description = "داروها، بیماری‌ها، حساسیت‌ها و تماس اضطراری سالمند — فقط برای پرستارِ همین شیفت"; }
     }
 }

@@ -14,5 +14,6 @@ public sealed record CreateShiftArg(
     TimeOnly        StartTime,
     TimeOnly        EndTime,
     decimal         Price,
+    decimal         CaregiverPayRate,
     string?         FamilyNote,
     long?           ReplacesShiftId = null);

@@ -64,7 +64,11 @@ public sealed class AgencyReadRepository(IDbConnection conn)
     public async Task<IReadOnlyList<AgencyPriceItem>> GetPricesAsync(long agencyId, CancellationToken ct = default)
     {
         const string sql = """
-            SELECT p.Id, p.ServiceType, p.ShiftKind, p.Price
+            SELECT p.Id, p.ServiceType, p.ShiftKind, p.Price, p.CaregiverPayRate,
+                   p.Price - p.CaregiverPayRate AS Margin,
+                   CASE WHEN p.Price > 0
+                        THEN ROUND((p.Price - p.CaregiverPayRate) * 100.0 / p.Price, 1)
+                        ELSE 0 END AS MarginPercent
             FROM AgencyServicePrices p
             WHERE p.AgencyId = @AgencyId
             ORDER BY p.ServiceType, p.ShiftKind

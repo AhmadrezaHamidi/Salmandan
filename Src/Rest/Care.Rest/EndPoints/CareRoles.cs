@@ -29,6 +29,13 @@ public static class CareRoles
     public const string FamilyOrAgency = Admin + "," + Family + "," + AgencyManager;
 }
 
+public static class ClaimsPrincipalExtensions
+{
+    /// <summary>نقش کاربر جاری از توکن — ورودی کنترل دسترسی سطح رکورد</summary>
+    public static string? RoleOf(this System.Security.Claims.ClaimsPrincipal principal)
+        => principal.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+}
+
 public static class EndpointRoleExtensions
 {
     /// <summary>محدود کردن endpoint به نقش‌های مشخص</summary>

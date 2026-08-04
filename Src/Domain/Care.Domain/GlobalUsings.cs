@@ -6,5 +6,6 @@ global using Care.Domain.Events.Senior;
 global using Care.Domain.Events.Shift;
 global using Care.Domain.Events.Report;
 global using Care.Domain.Events.Billing;
+global using Care.Domain.Events.Payroll;
 // مشخص کردن صریح OtpRequest پروژه در مقابل OtpRequest پکیج
 global using OtpRequest = Care.Domain.Identity.Entities.OtpRequest;

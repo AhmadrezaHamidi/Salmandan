@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Care.Application.Contract.Services;
 using Care.Rest.EndPoints.Billing;
 
 namespace Care.Rest.EndPoints;
@@ -43,12 +45,36 @@ public class OrderEndpoints : IEndpoint
     private static async Task<string> PostInvoice(long id, ICommandBus bus, CancellationToken ct)
         => await bus.Dispatch<string>(new IssueInvoiceCommand(id), ct);
 
-    private static async Task<OrderResult?> Get(long id, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<OrderResult?>(new GetOrderQuery(id), ct);
+    private static async Task<OrderResult?> Get(
+        long id, IUserContext user, ClaimsPrincipal principal, ICareAccessGuard guard,
+        IQueryBus bus, CancellationToken ct)
+    {
+        var order = await bus.DispatchAsync<OrderResult?>(new GetOrderQuery(id), ct);
+        if (order is null) return null;
 
-    private static async Task<OrderResult?> GetByShift(long shiftId, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<OrderResult?>(new GetOrderByShiftQuery(shiftId), ct);
+        await guard.EnsureCanViewSeniorAsync(order.SeniorId, user.UserId, principal.RoleOf(), ct);
+        return order;
+    }
 
-    private static async Task<PagedResult<OrderListItem>> Gets([AsParameters] GetOrdersQuery query, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<PagedResult<OrderListItem>>(query, ct);
+    private static async Task<OrderResult?> GetByShift(
+        long shiftId, IUserContext user, ClaimsPrincipal principal, ICareAccessGuard guard,
+        IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewShiftAsync(shiftId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<OrderResult?>(new GetOrderByShiftQuery(shiftId), ct);
+    }
+
+    private static async Task<PagedResult<OrderListItem>> Gets(
+        [AsParameters] GetOrdersQuery query, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        if (query.SeniorId.HasValue)
+            await guard.EnsureCanViewSeniorAsync(query.SeniorId.Value, user.UserId, principal.RoleOf(), ct);
+        else if (query.AgencyId.HasValue)
+            await guard.EnsureOwnsAgencyAsync(query.AgencyId.Value, user.UserId, principal.RoleOf(), ct);
+        else
+            throw new UnauthorizedAccessException();
+
+        return await bus.DispatchAsync<PagedResult<OrderListItem>>(query, ct);
+    }
 }

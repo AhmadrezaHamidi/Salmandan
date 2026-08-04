@@ -13,6 +13,7 @@ using Care.Domain.Agency.Repositories;
 using Care.Domain.Billing.Repositories;
 using Care.Domain.Caregiver.Repositories;
 using Care.Domain.Identity.Repositories;
+using Care.Domain.Payroll.Repositories;
 using Care.Domain.Report.Repositories;
 using Care.Domain.Senior.Repositories;
 using Care.Domain.Shift.Repositories;
@@ -22,6 +23,7 @@ using Care.Read.Dapper;
 using Care.Read.Dapper.Agency;
 using Care.Read.Dapper.Billing;
 using Care.Read.Dapper.Caregiver;
+using Care.Read.Dapper.Payroll;
 using Care.Read.Dapper.Report;
 using Care.Read.Dapper.Senior;
 using Care.Read.Dapper.Shift;
@@ -67,6 +69,7 @@ public class AutofacModule : Autofac.Module
         builder.RegisterType<ShiftRepository>()        .As<IShiftRepository>()        .InstancePerLifetimeScope();
         builder.RegisterType<ShiftReportRepository>()  .As<IShiftReportRepository>()  .InstancePerLifetimeScope();
         builder.RegisterType<CareOrderRepository>()    .As<ICareOrderRepository>()    .InstancePerLifetimeScope();
+        builder.RegisterType<PayoutRepository>()       .As<IPayoutRepository>()       .InstancePerLifetimeScope();
 
         // ── ۳. اتصال Dapper برای سمت خواندن ─────────────────────────────────
         DapperTypeHandlers.Register();
@@ -82,6 +85,7 @@ public class AutofacModule : Autofac.Module
         builder.RegisterType<ShiftReadRepository>()     .InstancePerLifetimeScope();
         builder.RegisterType<ReportReadRepository>()    .InstancePerLifetimeScope();
         builder.RegisterType<BillingReadRepository>()   .InstancePerLifetimeScope();
+        builder.RegisterType<PayrollReadRepository>()   .InstancePerLifetimeScope();
 
         // ── ۴. پیامک (با Circuit Breaker) ───────────────────────────────────
         builder.Register(c =>
@@ -108,6 +112,8 @@ public class AutofacModule : Autofac.Module
         // ── ۶. سرویس‌های پلتفرم ─────────────────────────────────────────────
         builder.RegisterType<JwtService>()         .As<IJwtService>()         .InstancePerLifetimeScope();
         builder.RegisterType<HealthRiskAnalyzer>() .As<IHealthRiskAnalyzer>() .InstancePerLifetimeScope();
+        builder.RegisterType<FamilyNotifier>()     .As<IFamilyNotifier>()     .InstancePerLifetimeScope();
+        builder.RegisterType<CareAccessGuard>()    .As<ICareAccessGuard>()    .InstancePerLifetimeScope();
         builder.RegisterType<FamilyNotifier>()     .As<IFamilyNotifier>()     .InstancePerLifetimeScope();
 
         // ── ۷. Middleware ها ────────────────────────────────────────────────

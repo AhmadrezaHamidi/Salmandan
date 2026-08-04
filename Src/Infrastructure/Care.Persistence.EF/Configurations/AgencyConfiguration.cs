@@ -50,6 +50,11 @@ public sealed class AgencyServicePriceConfiguration : IEntityTypeConfiguration<A
         builder.Property(x => x.ServiceType).HasConversion<string>().HasMaxLength(30).IsRequired();
         builder.Property(x => x.ShiftKind).HasConversion<string>().HasMaxLength(20).IsRequired();
         builder.Property(x => x.Price).HasPrecision(18, 0);
+        builder.Property(x => x.CaregiverPayRate).HasPrecision(18, 0);
+
+        builder.Ignore(x => x.Margin);
+        builder.Ignore(x => x.MarginPercent);
+
         builder.HasIndex(x => new { x.AgencyId, x.ServiceType, x.ShiftKind }).IsUnique();
     }
 }

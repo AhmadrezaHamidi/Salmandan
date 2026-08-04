@@ -26,8 +26,17 @@ public sealed class CareShift : AggregateRoot<long>
     public TimeOnly        EndTime           { get; private set; }
     public ShiftStatus     Status            { get; private set; }
 
-    /// <summary>مبلغ توافقی شیفت به ریال</summary>
+    /// <summary>مبلغ دریافتی از خانواده به ریال</summary>
     public decimal         Price             { get; private set; }
+
+    /// <summary>
+    /// دستمزد پرستار برای این شیفت — از تعرفه‌ی لحظه‌ی ثبت کپی می‌شود.
+    /// snapshot است تا تغییر بعدی تعرفه، حقوق شیفت‌های گذشته را عوض نکند.
+    /// </summary>
+    public decimal         CaregiverPayRate  { get; private set; }
+
+    /// <summary>شناسه فیش حقوقی که این شیفت در آن حساب شده — جلوی پرداخت دوباره را می‌گیرد</summary>
+    public long?           PayoutId          { get; private set; }
 
     public DateTime?       AssignedAt        { get; private set; }
     public DateTime?       CheckInAt         { get; private set; }
@@ -59,6 +68,21 @@ public sealed class CareShift : AggregateRoot<long>
     /// <summary>زمان شروع شیفت به‌صورت DateTime</summary>
     public DateTime StartsAt => Date.ToDateTime(StartTime);
 
+    /// <summary>سود ناخالص مؤسسه از این شیفت</summary>
+    public decimal Margin => Price - CaregiverPayRate;
+
+    /// <summary>
+    /// ساعت کارکرد واقعی از چک‌این تا چک‌اوت.
+    /// اگر ثبت نشده باشد به مدت برنامه‌ریزی‌شده برمی‌گردد.
+    /// همین عدد است که محاسبه حقوق را از دفتر کاغذی قابل‌دفاع‌تر می‌کند.
+    /// </summary>
+    public double WorkedHours => CheckInAt.HasValue && CheckOutAt.HasValue
+        ? (CheckOutAt.Value - CheckInAt.Value).TotalHours
+        : DurationHours;
+
+    /// <summary>آیا این شیفت در فیش حقوقی حساب شده است</summary>
+    public bool IsPaidOut => PayoutId.HasValue;
+
     /// <summary>آیا شیفت هنوز قابل لغو است</summary>
     public bool IsCancellable => Status is ShiftStatus.Requested or ShiftStatus.Assigned;
 
@@ -75,6 +99,7 @@ public sealed class CareShift : AggregateRoot<long>
         StartTime         = arg.StartTime;
         EndTime           = arg.EndTime;
         Price             = arg.Price;
+        CaregiverPayRate  = arg.CaregiverPayRate;
         FamilyNote        = arg.FamilyNote;
         ReplacesShiftId   = arg.ReplacesShiftId;
         Status            = ShiftStatus.Requested;
@@ -184,6 +209,21 @@ public sealed class CareShift : AggregateRoot<long>
     {
         RaiseDomainEvent(new ShiftReplacedEvent(Id, replacementShiftId, SeniorId));
     }
+
+    /// <summary>
+    /// ثبت اینکه دستمزد این شیفت در یک فیش حقوقی حساب شده است.
+    /// فقط شیفت تکمیل‌شده و فقط یک بار.
+    /// </summary>
+    public void IncludeInPayout(long payoutId)
+    {
+        if (Status != ShiftStatus.Completed) throw new ShiftNotCompletedException();
+        if (PayoutId.HasValue)               throw new ShiftAlreadyPaidOutException();
+
+        PayoutId = payoutId;
+    }
+
+    /// <summary>آزادسازی شیفت از فیش لغوشده تا در دوره بعد دوباره محاسبه شود</summary>
+    public void ReleaseFromPayout() => PayoutId = null;
 
     /// <summary>فرمول هاورساین — فاصله دو نقطه روی کره زمین به متر</summary>
     private static double DistanceInMeters(double lat1, double lon1, double lat2, double lon2)

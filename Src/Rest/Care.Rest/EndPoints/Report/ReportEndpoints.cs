@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Care.Application.Contract.Services;
 using Care.Rest.EndPoints.Report;
 
@@ -43,22 +44,48 @@ public class ShiftReportEndpoints : IEndpoint
     private static async Task<bool> PutApprove(long id, IUserContext user, ICommandBus bus, CancellationToken ct)
         => await bus.Dispatch<bool>(new ApproveShiftReportCommand(id, user.UserId), ct);
 
-    private static async Task<ShiftReportResult?> Get(long id, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<ShiftReportResult?>(new GetShiftReportQuery(id), ct);
+    private static async Task<ShiftReportResult?> Get(
+        long id, IUserContext user, ClaimsPrincipal principal, ICareAccessGuard guard,
+        IQueryBus bus, CancellationToken ct)
+    {
+        var report = await bus.DispatchAsync<ShiftReportResult?>(new GetShiftReportQuery(id), ct);
+        if (report is null) return null;
 
-    private static async Task<ShiftReportResult?> GetByShift(long shiftId, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<ShiftReportResult?>(new GetReportByShiftQuery(shiftId), ct);
+        await guard.EnsureCanViewSeniorAsync(report.SeniorId, user.UserId, principal.RoleOf(), ct);
+        return report;
+    }
+
+    private static async Task<ShiftReportResult?> GetByShift(
+        long shiftId, IUserContext user, ClaimsPrincipal principal, ICareAccessGuard guard,
+        IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewShiftAsync(shiftId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<ShiftReportResult?>(new GetReportByShiftQuery(shiftId), ct);
+    }
 
     private static async Task<PagedResult<ShiftReportListItem>> GetBySenior(
-        long seniorId, int page, int pageSize, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<PagedResult<ShiftReportListItem>>(
+        long seniorId, int page, int pageSize, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewSeniorAsync(seniorId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<PagedResult<ShiftReportListItem>>(
             new GetReportsBySeniorQuery(seniorId, page <= 0 ? 1 : page, pageSize <= 0 ? 20 : pageSize), ct);
+    }
 
     private static async Task<IReadOnlyList<HealthTimelinePoint>> GetTimeline(
-        long seniorId, int count, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<IReadOnlyList<HealthTimelinePoint>>(
+        long seniorId, int count, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewSeniorAsync(seniorId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<IReadOnlyList<HealthTimelinePoint>>(
             new GetHealthTimelineQuery(seniorId, count <= 0 ? 14 : count), ct);
+    }
 
-    private static async Task<HealthRiskResult> GetRisk(long seniorId, IQueryBus bus, CancellationToken ct)
-        => await bus.DispatchAsync<HealthRiskResult>(new GetHealthRiskQuery(seniorId), ct);
+    private static async Task<HealthRiskResult> GetRisk(
+        long seniorId, IUserContext user, ClaimsPrincipal principal,
+        ICareAccessGuard guard, IQueryBus bus, CancellationToken ct)
+    {
+        await guard.EnsureCanViewSeniorAsync(seniorId, user.UserId, principal.RoleOf(), ct);
+        return await bus.DispatchAsync<HealthRiskResult>(new GetHealthRiskQuery(seniorId), ct);
+    }
 }

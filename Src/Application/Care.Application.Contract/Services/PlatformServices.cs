@@ -24,6 +24,27 @@ public interface IPaymentSettings
 }
 
 /// <summary>
+/// کنترل دسترسی در سطح رکورد.
+///
+/// نقش تعیین می‌کند «چه کاری» مجاز است؛ این سرویس تعیین می‌کند «روی کدام رکورد».
+/// بدون آن یک عضو خانواده می‌تواند با حدس زدن شناسه، پرونده خانواده‌ی دیگری را بخواند.
+/// </summary>
+public interface ICareAccessGuard
+{
+    /// <summary>آیا کاربر حق دیدن اطلاعات این سالمند را دارد</summary>
+    Task EnsureCanViewSeniorAsync(long seniorId, long userId, string? role, CancellationToken ct = default);
+
+    /// <summary>آیا کاربر حق دیدن این شیفت را دارد</summary>
+    Task EnsureCanViewShiftAsync(long shiftId, long userId, string? role, CancellationToken ct = default);
+
+    /// <summary>آیا کاربر مالک این مؤسسه است — دروازه‌ی داده‌های مالی مؤسسه</summary>
+    Task EnsureOwnsAgencyAsync(long agencyId, long userId, string? role, CancellationToken ct = default);
+
+    /// <summary>فیش حقوقی را فقط مؤسسه‌ی صادرکننده و خود پرستار می‌بینند</summary>
+    Task EnsureCanViewPayoutAsync(long agencyId, long caregiverId, long userId, string? role, CancellationToken ct = default);
+}
+
+/// <summary>
 /// اطلاع‌رسانی به اعضای حلقه خانواده یک سالمند.
 /// همان چیزی که «آرامش خاطر» را از یک وعده به یک تجربه‌ی روزمره تبدیل می‌کند.
 /// </summary>
